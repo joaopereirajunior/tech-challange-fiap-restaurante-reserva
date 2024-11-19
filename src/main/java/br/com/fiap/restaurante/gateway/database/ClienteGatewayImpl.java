@@ -26,6 +26,7 @@ public class ClienteGatewayImpl implements ClienteGateway {
         entity.setCpf(cliente.getCpf());
         ClienteEntity savedEntity = clienteRepository.save(entity);
         return new Cliente(savedEntity.getId(), savedEntity.getNome(), savedEntity.getCpf());
+
     }
 
     @Override
