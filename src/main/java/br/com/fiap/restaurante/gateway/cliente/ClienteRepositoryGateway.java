@@ -1,4 +1,4 @@
-package br.com.fiap.restaurante.gateway;
+package br.com.fiap.restaurante.gateway.cliente;
 
 import br.com.fiap.restaurante.domain.Cliente;
 import org.springframework.stereotype.Repository;

@@ -1,6 +1,6 @@
 package br.com.fiap.restaurante.usecase.cliente.impl;
 
-import br.com.fiap.restaurante.gateway.ClienteGateway;
+import br.com.fiap.restaurante.gateway.cliente.ClienteGateway;
 import br.com.fiap.restaurante.usecase.cliente.DeletarClienteUseCase;
 import org.springframework.stereotype.Service;
 
