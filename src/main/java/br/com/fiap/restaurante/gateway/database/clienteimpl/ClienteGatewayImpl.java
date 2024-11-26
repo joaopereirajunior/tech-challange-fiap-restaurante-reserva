@@ -1,9 +1,9 @@
-package br.com.fiap.restaurante.gateway.database;
+package br.com.fiap.restaurante.gateway.database.clienteimpl;
 
 import br.com.fiap.restaurante.domain.Cliente;
-import br.com.fiap.restaurante.gateway.ClienteGateway;
-import br.com.fiap.restaurante.gateway.database.entity.ClienteEntity;
-import br.com.fiap.restaurante.gateway.database.repository.ClienteRepository;
+import br.com.fiap.restaurante.gateway.cliente.ClienteGateway;
+import br.com.fiap.restaurante.gateway.database.entity.cliente.ClienteEntity;
+import br.com.fiap.restaurante.gateway.database.repository.cliente.ClienteRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
