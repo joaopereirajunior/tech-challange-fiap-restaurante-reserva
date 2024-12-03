@@ -72,8 +72,6 @@ class ObterRestaurantePorIdUseCaseImplTest {
 			.isInstanceOf(RestauranteNaoEncontradoException.class)
 			.hasMessage("O restaurante informado não existe.");
 		verify(restauranteGateway, times(1)).buscarPorId(anyLong());
-		verify(restauranteGateway, never()).atualizar(any(Restaurante.class));
-
 	}
 	
 	private Restaurante gerarRestaurante() {

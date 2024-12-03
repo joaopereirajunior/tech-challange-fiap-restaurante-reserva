@@ -15,6 +15,6 @@ public interface RestauranteRepositoryGateway {
 
 	void deletar(Long id);
 	
-	Restaurante atualizar(Restaurante restaurante);
+	Restaurante atualizar(Restaurante restauranteRecuperado, Restaurante restauranteModificado);
 
 }

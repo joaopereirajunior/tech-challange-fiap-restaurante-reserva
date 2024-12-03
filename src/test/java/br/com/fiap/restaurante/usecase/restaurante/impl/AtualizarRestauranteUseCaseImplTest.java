@@ -49,22 +49,23 @@ class AtualizarRestauranteUseCaseImplTest {
 		restauranteModificado.setTipoCozinha("Lanches Diversos");
 		restauranteModificado.setCapacidade(30);
 		when(restauranteGateway.buscarPorId(anyLong())).thenReturn(Optional.of(restaurante));
-		when(restauranteGateway.atualizar(any(Restaurante.class))).thenReturn((restauranteModificado));
+		when(restauranteGateway.atualizar(any(Restaurante.class), any(Restaurante.class)))
+			.thenReturn(restauranteModificado);
 		
 		// Act
-		Restaurante mensagemObtida = atualizarRestauranteUseCaseImpl.execute(restaurante.getId(),
+		Restaurante restauranteObtido = atualizarRestauranteUseCaseImpl.execute(restaurante.getId(),
 				restauranteModificado);
 		
 		// Assert
 		verify(restauranteGateway, times(1)).buscarPorId(anyLong());
-		verify(restauranteGateway, times(1)).atualizar(any(Restaurante.class));
-		assertThat(mensagemObtida).isInstanceOf(Restaurante.class).isNotNull();
-		assertThat(restaurante.getId()).isEqualTo(mensagemObtida.getId());
-		assertThat(restaurante.getNome()).isEqualTo(mensagemObtida.getNome());
-		assertThat(restaurante.getLocalizacao()).isNotEqualTo(mensagemObtida.getLocalizacao());
-		assertThat(restaurante.getTipoCozinha()).isNotEqualTo(mensagemObtida.getTipoCozinha());
-		assertThat(restaurante.getHorarioFuncionamento()).isEqualTo(mensagemObtida.getHorarioFuncionamento());
-		assertThat(restaurante.getCapacidade()).isNotEqualTo(mensagemObtida.getCapacidade());
+		verify(restauranteGateway, times(1)).atualizar(any(Restaurante.class), any(Restaurante.class));
+		assertThat(restauranteObtido).isInstanceOf(Restaurante.class).isNotNull();
+		assertThat(restaurante.getId()).isEqualTo(restauranteObtido.getId());
+		assertThat(restaurante.getNome()).isEqualTo(restauranteObtido.getNome());
+		assertThat(restaurante.getLocalizacao()).isNotEqualTo(restauranteObtido.getLocalizacao());
+		assertThat(restaurante.getTipoCozinha()).isNotEqualTo(restauranteObtido.getTipoCozinha());
+		assertThat(restaurante.getHorarioFuncionamento()).isEqualTo(restauranteObtido.getHorarioFuncionamento());
+		assertThat(restaurante.getCapacidade()).isNotEqualTo(restauranteObtido.getCapacidade());
 	}
 	
 	@Test
@@ -80,8 +81,7 @@ class AtualizarRestauranteUseCaseImplTest {
 			.isInstanceOf(RestauranteNaoEncontradoException.class)
 			.hasMessage("O restaurante informado não existe.");
 		verify(restauranteGateway, times(1)).buscarPorId(anyLong());
-		verify(restauranteGateway, never()).atualizar(any(Restaurante.class));
-
+		verify(restauranteGateway, never()).atualizar(any(Restaurante.class), any(Restaurante.class));
 	}
 	
 	private Restaurante gerarRestaurante() {

@@ -19,15 +19,15 @@ public class AtualizarRestauranteUseCaseImpl implements AtualizarRestauranteUseC
     }
     
 	@Override
-	public Restaurante execute(Long id, Restaurante restaurante) {
+	public Restaurante execute(Long id, Restaurante restauranteAtualizado) {
 		
-		Optional<Restaurante> entity = restauranteGateway.buscarPorId(id);
+		Optional<Restaurante> entidade = restauranteGateway.buscarPorId(id);
 		
-		if (!entity.isPresent()) { 
+		if (!entidade.isPresent()) { 
 			throw new RestauranteNaoEncontradoException("O restaurante informado não existe.");
 		}
 
-		return restauranteGateway.atualizar(restaurante);
+		return restauranteGateway.atualizar(entidade.get(), restauranteAtualizado);
 	}
 	
 }
