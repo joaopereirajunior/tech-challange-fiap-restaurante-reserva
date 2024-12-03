@@ -27,6 +27,7 @@ class AtualizarRestauranteUseCaseImplTest {
 	
 	@Mock
 	RestauranteGateway restauranteGateway;
+	
 	AutoCloseable openMocks;
 
 	@BeforeEach
