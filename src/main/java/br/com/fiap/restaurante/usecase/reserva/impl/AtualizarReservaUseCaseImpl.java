@@ -4,15 +4,15 @@ import br.com.fiap.restaurante.domain.Reserva;
 import br.com.fiap.restaurante.exception.ReservaNaoEncontradaException;
 import br.com.fiap.restaurante.gateway.reserva.ReservaGateway;
 import br.com.fiap.restaurante.usecase.reserva.AtualizarReservaUseCase;
-import br.com.fiap.restaurante.usecase.reserva.BuscarReservaPorIdUseCase;
+import br.com.fiap.restaurante.usecase.reserva.ObterReservaPorIdUseCase;
 import org.springframework.stereotype.Service;
 
 @Service
 public class AtualizarReservaUseCaseImpl implements AtualizarReservaUseCase {
     private final ReservaGateway reservaGateway;
-    private final BuscarReservaPorIdUseCase buscarReservaPorIdUseCase;
+    private final ObterReservaPorIdUseCase buscarReservaPorIdUseCase;
 
-    public AtualizarReservaUseCaseImpl(ReservaGateway reservaGateway, BuscarReservaPorIdUseCase buscarReservaPorIdUseCase) {
+    public AtualizarReservaUseCaseImpl(ReservaGateway reservaGateway, ObterReservaPorIdUseCase buscarReservaPorIdUseCase) {
         this.reservaGateway = reservaGateway;
         this.buscarReservaPorIdUseCase = buscarReservaPorIdUseCase;
     }

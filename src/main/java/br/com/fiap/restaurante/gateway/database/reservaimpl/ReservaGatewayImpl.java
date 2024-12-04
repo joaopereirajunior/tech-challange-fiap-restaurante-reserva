@@ -1,7 +1,6 @@
 package br.com.fiap.restaurante.gateway.database.reservaimpl;
 
 import br.com.fiap.restaurante.domain.Reserva;
-import br.com.fiap.restaurante.exception.ClienteNaoEncontradoException;
 import br.com.fiap.restaurante.exception.RestauranteNaoEncontradoException;
 import br.com.fiap.restaurante.gateway.cliente.ClienteGateway;
 import br.com.fiap.restaurante.gateway.database.entity.reserva.ReservaEntity;
@@ -52,17 +51,42 @@ public class ReservaGatewayImpl implements ReservaGateway {
         entity.setConfirmada(reserva.getConfirmada());
 
         ReservaEntity savedEntity = reservaRepository.save(entity);
-        return entityToDomain(savedEntity);
+        var retorno = mapToDomain(savedEntity);
+
+        retorno.setCliente(reserva.getCliente());
+        retorno.setRestaurante(reserva.getRestaurante());
+
+        return retorno;
+    }
+
+    public Reserva atualizar(Reserva reservaRecuperada, Reserva reservaModificada){
+
+        reservaRecuperada.setCliente(reservaModificada.getCliente());
+        reservaRecuperada.setConfirmada(reservaModificada.getConfirmada());
+        reservaRecuperada.setData(reservaModificada.getData());
+        reservaRecuperada.setRestaurante(reservaModificada.getRestaurante());
+        reservaRecuperada.setTotalPessoas(reservaModificada.getTotalPessoas());
+
+        var entity = mapToEntity(reservaRecuperada);
+
+        entity = reservaRepository.save(entity);
+
+        var retorno = mapToDomain(entity);
+
+        retorno.setCliente(reservaModificada.getCliente());
+        retorno.setRestaurante(reservaModificada.getRestaurante());
+
+        return retorno;
     }
 
     @Override
     public Optional<Reserva> buscarPorId(Long id) {
-        return reservaRepository.findById(id).map(entity -> entityToDomain(entity));
+        return reservaRepository.findById(id).map(entity -> mapToDomain(entity));
     }
 
     @Override
-    public List<Reserva> listarTodos() {
-        return reservaRepository.findAll().stream().map(entity -> entityToDomain(entity)).collect(Collectors.toList());
+    public List<Reserva> listarTodas() {
+        return reservaRepository.findAll().stream().map(entity -> mapToDomain(entity)).collect(Collectors.toList());
     }
 
     @Override
@@ -70,23 +94,53 @@ public class ReservaGatewayImpl implements ReservaGateway {
         reservaRepository.deleteById(id);
     }
 
-    private Reserva entityToDomain(ReservaEntity entity)
+    private Reserva mapToDomain(ReservaEntity entity)
     {
-        return new Reserva(
-            clienteGateway.buscarPorId(entity.getIdClient()).orElseThrow(() -> new ClienteNaoEncontradoException(entity.getIdClient())),
-            restauranteGateway.buscarPorId(entity.getIdRestaurante()).orElseThrow(() -> new RestauranteNaoEncontradoException(entity.getIdRestaurante())),
+        var cliente = clienteGateway.buscarPorId(entity.getIdClient());
+        var restaurante =restauranteGateway.buscarPorId(entity.getIdRestaurante());
+
+        var reserva = new Reserva(
+            null,
+            null,
             entity.getId(),
             entity.getTotalPessoas(),
             entity.getData(),
             entity.getConfirmada());
+
+        if(cliente.isPresent()){
+            reserva.setCliente(cliente.get());
+        }
+
+        if(restaurante.isPresent()){
+            reserva.setRestaurante(restaurante.get());
+        }
+
+        return reserva;
+    }
+
+    private ReservaEntity mapToEntity(Reserva reserva)
+    {
+        ReservaEntity entity = new ReservaEntity();
+        entity.setId(reserva.getId());
+        entity.setIdClient(reserva.getCliente().getId());
+        entity.setIdRestaurante(reserva.getRestaurante().getId());
+        entity.setTotalPessoas(reserva.getTotalPessoas());
+        entity.setData(reserva.getData());
+        entity.setConfirmada(reserva.getConfirmada());
+
+        return entity;
     }
 
     private Long getTotalDisponibilidade(Reserva reserva)
     {
-        var restaurante = restauranteGateway.buscarPorId(reserva.getRestaurante().getId());
+        var restaurante = Optional.of(reserva.getRestaurante());
 
         if(!restaurante.isPresent()){
             throw new RestauranteNaoEncontradoException(reserva.getRestaurante().getId());
+        }
+
+        if(reserva.getRestaurante().getCapacidade() == 0){
+            restaurante = restauranteGateway.buscarPorId(reserva.getRestaurante().getId());
         }
 
         var totalReservado = reservaRepository.findAll().stream().filter(r -> r.getData().equals(reserva.getData())).collect(Collectors.toList()).stream().mapToLong(t -> t.getTotalPessoas()).sum();

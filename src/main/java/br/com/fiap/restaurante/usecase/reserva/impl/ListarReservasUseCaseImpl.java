@@ -18,6 +18,6 @@ public class ListarReservasUseCaseImpl implements ListarReservasUseCase {
 
     @Override
     public List<Reserva> execute() {
-        return reservaGateway.listarTodos();
+        return reservaGateway.listarTodas();
     }
 }
