@@ -51,8 +51,15 @@ public class RestauranteGatewayImpl implements RestauranteGateway {
     }
     
     @Override
-    public Restaurante atualizar(Restaurante restaurante) {
-    	RestauranteEntity entity = mapToEntity(restaurante);
+    public Restaurante atualizar(Restaurante restauranteRecuperado, Restaurante restauranteModificado) {
+    	
+    	restauranteRecuperado.setNome(restauranteModificado.getNome());
+    	restauranteRecuperado.setLocalizacao(restauranteModificado.getLocalizacao());
+    	restauranteRecuperado.setTipoCozinha(restauranteModificado.getTipoCozinha());
+    	restauranteRecuperado.setHorarioFuncionamento(restauranteModificado.getHorarioFuncionamento());
+    	restauranteRecuperado.setCapacidade(restauranteModificado.getCapacidade());
+    	
+    	RestauranteEntity entity = mapToEntity(restauranteRecuperado);
     	
     	return mapToDomain(restauranteRepository.save(entity));
     }
