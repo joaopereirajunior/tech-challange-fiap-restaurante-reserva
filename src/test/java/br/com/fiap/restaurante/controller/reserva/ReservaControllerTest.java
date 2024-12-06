@@ -25,6 +25,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
 import br.com.fiap.restaurante.domain.Cliente;
 import br.com.fiap.restaurante.domain.Reserva;
 import br.com.fiap.restaurante.domain.Restaurante;
@@ -145,11 +149,13 @@ class ReservaControllerTest {
     }
     
 	public static String asJsonString(final Reserva object) {
-		try {            
-            return "{}";
-			//return new ObjectMapper().writeValueAsString(object);
+		try {
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.registerModule(new JavaTimeModule());
+            mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+			return mapper.writeValueAsString(object);
 		} catch (Exception e) {
-			throw new RuntimeException();
+			return "{ }";
 		}
 	}
 

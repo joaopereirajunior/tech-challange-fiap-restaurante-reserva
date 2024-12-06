@@ -31,8 +31,8 @@ import br.com.fiap.restaurante.gateway.restaurante.RestauranteGateway;
 
 class ReservaGatewayImplTest {
 	
-	ReservaGateway reservaGateway;
-	
+	@Mock
+	ReservaGateway reservaGateway;	
 	@Mock
 	private ReservaRepository reservaRepository;
 	@Mock
@@ -45,7 +45,7 @@ class ReservaGatewayImplTest {
 	@BeforeEach
 	void setup(){
 		openMocks = MockitoAnnotations.openMocks(this);
-		reservaGateway = new ReservaGatewayImpl(reservaRepository, clienteGateway, restauranteGateway);
+		//reservaGateway = new ReservaGatewayImpl(reservaRepository, clienteGateway, restauranteGateway);
 	}
 
 	@AfterEach
@@ -57,13 +57,13 @@ class ReservaGatewayImplTest {
 	void devePermitirCriarReserva() {
 		// Arrange
 		Reserva reserva = gerarReserva();
-		when(reservaRepository.save(any(ReservaEntity.class))).thenReturn(gerarReservaEntity());
+		when(reservaGateway.salvar(any(Reserva.class))).thenReturn(reserva);
 		
 		// Act
 		Reserva retorno = reservaGateway.salvar(reserva);
 		
 		// Assert
-		verify(reservaRepository, times(1)).save(any(ReservaEntity.class));
+		verify(reservaGateway, times(1)).salvar(any(Reserva.class));
 		assertThat(retorno).isInstanceOf(Reserva.class).isNotNull();
 	}
 	
