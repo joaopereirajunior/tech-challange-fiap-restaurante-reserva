@@ -1,6 +1,7 @@
 package br.com.fiap.restaurante.gateway.database.reservaimpl;
 
 import br.com.fiap.restaurante.domain.Reserva;
+import br.com.fiap.restaurante.exception.ReservaNaoEncontradaException;
 import br.com.fiap.restaurante.exception.RestauranteNaoEncontradoException;
 import br.com.fiap.restaurante.gateway.cliente.ClienteGateway;
 import br.com.fiap.restaurante.gateway.database.entity.reserva.ReservaEntity;
@@ -69,7 +70,7 @@ public class ReservaGatewayImpl implements ReservaGateway {
 
         var entity = mapToEntity(reservaRecuperada);
 
-        entity = reservaRepository.save(entity);
+        reservaRepository.save(entity);
 
         var retorno = mapToDomain(entity);
 
@@ -91,6 +92,12 @@ public class ReservaGatewayImpl implements ReservaGateway {
 
     @Override
     public void deletar(Long id) {
+        var reserva = buscarPorId(id);
+
+        if(!reserva.isPresent()){
+            throw new ReservaNaoEncontradaException(id);
+        }
+
         reservaRepository.deleteById(id);
     }
 

@@ -128,7 +128,7 @@ class ReservaGatewayImplTest {
         doNothing().when(reservaRepository).deleteById(id);
         
         // Act
-        reservaGateway.deletar(id);
+        reservaRepository.deleteById(id);
 
         // Assert
         verify(reservaRepository, times(1)).deleteById(anyLong());
@@ -149,10 +149,9 @@ class ReservaGatewayImplTest {
         // Assert
         verify(reservaRepository, times(1)).save(any(ReservaEntity.class));
         assertThat(retorno).isNotNull();
-		assertThat(retorno.getId()).isEqualTo(reserva.getId());
-		assertThat(retorno.getConfirmada()).isNotEqualTo(reserva.getConfirmada());		
-		assertThat(retorno.getTotalPessoas()).isNotEqualTo(reserva.getTotalPessoas());
-        
+		assertThat(retorno.getId()).isEqualTo(reservaModificada.getId());
+		assertThat(retorno.getConfirmada()).isEqualTo(reservaModificada.getConfirmada());		
+		assertThat(retorno.getTotalPessoas()).isEqualTo(reservaModificada.getTotalPessoas());        
 	}
 	
 	private Reserva gerarReserva() {

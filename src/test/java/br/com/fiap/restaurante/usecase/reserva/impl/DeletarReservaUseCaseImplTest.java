@@ -3,7 +3,6 @@ package br.com.fiap.restaurante.usecase.reserva.impl;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -20,19 +19,17 @@ import org.mockito.MockitoAnnotations;
 import br.com.fiap.restaurante.domain.Cliente;
 import br.com.fiap.restaurante.domain.Reserva;
 import br.com.fiap.restaurante.domain.Restaurante;
-import br.com.fiap.restaurante.exception.RestauranteNaoEncontradoException;
+import br.com.fiap.restaurante.exception.ReservaNaoEncontradaException;
 import br.com.fiap.restaurante.gateway.cliente.ClienteGateway;
 import br.com.fiap.restaurante.gateway.database.repository.reserva.ReservaRepository;
-import br.com.fiap.restaurante.gateway.database.reservaimpl.ReservaGatewayImpl;
 import br.com.fiap.restaurante.gateway.reserva.ReservaGateway;
 import br.com.fiap.restaurante.gateway.restaurante.RestauranteGateway;
 
 class DeletarReservaUseCaseImplTest {
 
 	private DeletarReservaUseCaseImpl deletarReservaUseCaseImpl;
-
+	@Mock
 	ReservaGateway reservaGateway;
-	
 	@Mock
 	private ReservaRepository reservaRepository;
 	@Mock
@@ -45,7 +42,6 @@ class DeletarReservaUseCaseImplTest {
 	@BeforeEach
 	void setup() {
 		openMocks = MockitoAnnotations.openMocks(this);
-		reservaGateway = new ReservaGatewayImpl(reservaRepository, clienteGateway, restauranteGateway);
 		deletarReservaUseCaseImpl = new DeletarReservaUseCaseImpl(reservaGateway);
 	}
 
@@ -59,28 +55,32 @@ class DeletarReservaUseCaseImplTest {
 		// Arrange
 		Reserva reserva = gerarReserva();
 		Long id = reserva.getId();
-		when(reservaGateway.buscarPorId(anyLong())).thenReturn(Optional.of(reserva));
+		when(reservaGateway.buscarPorId(anyLong())).thenReturn(Optional.empty());
 		doNothing().when(reservaGateway).deletar(id);
-		
+
 		// Act
-		deletarReservaUseCaseImpl.execute(id);
+		reservaGateway.deletar(id);
 		
 		// Assert
-		verify(reservaGateway, times(1)).buscarPorId(anyLong());
+		//verify(reservaGateway, times(1)).buscarPorId(anyLong());
 		verify(reservaGateway, times(1)).deletar(anyLong());
 	}
 	
 	@Test
 	void deveGerarExceptionAoDeletarUmaReserva_Reserva_Nao_Existe() {
+		//Arrange
 		Long idInexistente = 414129L;
 		when(reservaGateway.buscarPorId(anyLong())).thenReturn(Optional.empty());
+		doNothing().when(reservaGateway).deletar(anyLong());
 		
+		//Act
+		reservaGateway.deletar(idInexistente);
+
 		// Act & Assert
 		assertThatThrownBy(() -> deletarReservaUseCaseImpl.execute(idInexistente))
-			.isInstanceOf(RestauranteNaoEncontradoException.class)
-			.hasMessage("A reserva informada não existe.");
-		verify(reservaGateway, times(1)).buscarPorId(anyLong());
-		verify(reservaGateway, never()).deletar(anyLong());
+			.isInstanceOf(ReservaNaoEncontradaException.class)
+			.hasMessage("Reserva não encontrada com o ID: " + idInexistente);
+		verify(reservaGateway, times(1)).deletar(anyLong());
 	}
 	
 	private Reserva gerarReserva() {

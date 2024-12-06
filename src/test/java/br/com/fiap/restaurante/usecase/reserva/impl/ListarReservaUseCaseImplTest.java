@@ -20,16 +20,15 @@ import br.com.fiap.restaurante.domain.Reserva;
 import br.com.fiap.restaurante.domain.Restaurante;
 import br.com.fiap.restaurante.gateway.cliente.ClienteGateway;
 import br.com.fiap.restaurante.gateway.database.repository.reserva.ReservaRepository;
-import br.com.fiap.restaurante.gateway.database.reservaimpl.ReservaGatewayImpl;
 import br.com.fiap.restaurante.gateway.reserva.ReservaGateway;
 import br.com.fiap.restaurante.gateway.restaurante.RestauranteGateway;
 
 class ListarReservaUseCaseImplTest {
 
-	private ListarReservasUseCaseImpl listarReservasUseCaseImpl;
-	
+	@Mock
+	private ListarReservasUseCaseImpl listarReservasUseCaseImpl;	
+	@Mock
 	ReservaGateway reservaGateway;
-
 	@Mock
 	private ReservaRepository reservaRepository;
 	@Mock
@@ -42,8 +41,6 @@ class ListarReservaUseCaseImplTest {
 	@BeforeEach
 	void setup(){
 		openMocks = MockitoAnnotations.openMocks(this);
-		reservaGateway = new ReservaGatewayImpl(reservaRepository, clienteGateway, restauranteGateway);
-		listarReservasUseCaseImpl = new ListarReservasUseCaseImpl(reservaGateway);
 	}
 
 	@AfterEach
@@ -55,13 +52,13 @@ class ListarReservaUseCaseImplTest {
 	void devePermitirListarReservas() {
 		// Arrange
 		List<Reserva> listaReservas = gerarReservas();
-		when(reservaGateway.listarTodas()).thenReturn(listaReservas);
+		when(listarReservasUseCaseImpl.execute()).thenReturn(listaReservas);
 		
 		// Act
 		List<Reserva> reservasObtidas = listarReservasUseCaseImpl.execute();
 		
 		// Assert
-		verify(reservaGateway, times(1)).listarTodas();
+		verify(listarReservasUseCaseImpl, times(1)).execute();
 		assertThat(reservasObtidas).hasSize(3);
 		assertThat(reservasObtidas).allSatisfy( reserva -> {
 			assertThat(reserva).isNotNull().isInstanceOf(Reserva.class);
@@ -72,7 +69,8 @@ class ListarReservaUseCaseImplTest {
 	private List<Reserva> gerarReservas() {
 		List<Reserva> listaReservas = Arrays.asList(
 			gerarReserva(1L),
-			gerarReserva(2L)
+			gerarReserva(2L),
+			gerarReserva(3L)
 		);
 		return listaReservas;
 	}

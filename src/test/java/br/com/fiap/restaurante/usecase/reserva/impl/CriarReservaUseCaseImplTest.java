@@ -19,7 +19,6 @@ import br.com.fiap.restaurante.domain.Reserva;
 import br.com.fiap.restaurante.domain.Restaurante;
 import br.com.fiap.restaurante.gateway.cliente.ClienteGateway;
 import br.com.fiap.restaurante.gateway.database.repository.reserva.ReservaRepository;
-import br.com.fiap.restaurante.gateway.database.reservaimpl.ReservaGatewayImpl;
 import br.com.fiap.restaurante.gateway.reserva.ReservaGateway;
 import br.com.fiap.restaurante.gateway.restaurante.RestauranteGateway;
 
@@ -27,8 +26,8 @@ class CriarReservaUseCaseImplTest {
 
 	private CriarReservaUseCaseImpl criarReservaUseCaseImpl;
 	
-	ReservaGateway reservaGateway;
-	
+	@Mock
+	private ReservaGateway reservaGateway;	
 	@Mock
 	private ReservaRepository reservaRepository;
 	@Mock
@@ -41,7 +40,6 @@ class CriarReservaUseCaseImplTest {
 	@BeforeEach
 	void setup(){
 		openMocks = MockitoAnnotations.openMocks(this);
-		reservaGateway = new ReservaGatewayImpl(reservaRepository, clienteGateway, restauranteGateway);
 		criarReservaUseCaseImpl = new CriarReservaUseCaseImpl(reservaGateway);
 	}
 
@@ -66,8 +64,8 @@ class CriarReservaUseCaseImplTest {
 		assertThat(retorno).isNotNull();
 		assertThat(retorno.getId()).isEqualTo(reserva.getId());
 		assertThat(retorno.getCliente().getId()).isEqualTo(reserva.getCliente().getId());
-		assertThat(retorno.getRestaurante().getId()).isNotEqualTo(reserva.getRestaurante().getId());
-		assertThat(retorno.getTotalPessoas()).isNotEqualTo(reserva.getTotalPessoas());
+		assertThat(retorno.getRestaurante().getId()).isEqualTo(reserva.getRestaurante().getId());
+		assertThat(retorno.getTotalPessoas()).isEqualTo(reserva.getTotalPessoas());
 		assertThat(retorno.getConfirmada()).isEqualTo(reserva.getConfirmada());
 	}
 	

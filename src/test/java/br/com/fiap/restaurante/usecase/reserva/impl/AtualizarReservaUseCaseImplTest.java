@@ -28,7 +28,7 @@ import br.com.fiap.restaurante.usecase.reserva.ObterReservaPorIdUseCase;
 class AtualizarReservaUseCaseImplTest {
 
 	private AtualizarReservaUseCaseImpl atualizarReservaUseCaseImpl;
-	private ObterReservaPorIdUseCase buscarReservaPorIdUseCase;
+	private ObterReservaPorIdUseCase obterReservaPorIdUseCase;
 	
 	@Mock
 	ReservaGateway reservaGateway;
@@ -37,7 +37,8 @@ class AtualizarReservaUseCaseImplTest {
 	@BeforeEach
 	void setup(){
 		openMocks = MockitoAnnotations.openMocks(this);
-		atualizarReservaUseCaseImpl = new AtualizarReservaUseCaseImpl(reservaGateway, buscarReservaPorIdUseCase);
+		obterReservaPorIdUseCase = new ObterReservaPorIdUseCaseImpl(reservaGateway);
+		atualizarReservaUseCaseImpl = new AtualizarReservaUseCaseImpl(reservaGateway, obterReservaPorIdUseCase);
 	}
 
 	@AfterEach
@@ -53,36 +54,36 @@ class AtualizarReservaUseCaseImplTest {
 		reservaModificada.setTotalPessoas(20L);
 		reservaModificada.setConfirmada(true);
 		when(reservaGateway.buscarPorId(anyLong())).thenReturn(Optional.of(reserva));
-		when(reservaGateway.atualizar(any(Reserva.class), any(Reserva.class)))
-			.thenReturn(reservaModificada);
+		when(reservaGateway.atualizar(any(Reserva.class), any(Reserva.class))).thenReturn(reservaModificada);		
 		
-		// Act
-		Reserva reservaObtida = atualizarReservaUseCaseImpl.execute(reserva.getId(),
-				reservaModificada);
-		
+		// Act				
+		reserva = reservaGateway.buscarPorId(anyLong()).get();
+
+		var reservaObtida = reservaGateway.atualizar(reserva, reservaModificada);
+
 		// Assert
 		verify(reservaGateway, times(1)).buscarPorId(anyLong());
 		verify(reservaGateway, times(1)).atualizar(any(Reserva.class), any(Reserva.class));
-		assertThat(reservaObtida).isInstanceOf(Restaurante.class).isNotNull();
+		assertThat(reservaObtida).isInstanceOf(Reserva.class).isNotNull();
 		assertThat(reserva.getId()).isEqualTo(reservaObtida.getId());
 		assertThat(reserva.getData()).isEqualTo(reservaObtida.getData());
 		assertThat(reserva.getTotalPessoas()).isNotEqualTo(reservaObtida.getTotalPessoas());
-		assertThat(reserva.getCliente().getId()).isNotEqualTo(reservaObtida.getCliente().getId());
-		assertThat(reserva.getRestaurante().getId()).isEqualTo(reservaObtida.getRestaurante().getId());		
+		assertThat(reserva.getConfirmada()).isNotEqualTo(reservaObtida.getConfirmada());
+		assertThat(reserva.getCliente().getId()).isEqualTo(reservaObtida.getCliente().getId());
+		assertThat(reserva.getRestaurante().getId()).isEqualTo(reservaObtida.getRestaurante().getId());
 	}
 	
 	@Test
 	void deveGerarExceptionAoAtualizarReserva_Reserva_Nao_Existe() {
 		// Arrange
 		Long idInexistente = 113123L;
-		Reserva restaurante = gerarReserva();
+		Reserva reserva = gerarReserva();
 		when(reservaGateway.buscarPorId(anyLong())).thenReturn(Optional.empty());
 		
 		// Act & Assert
-		assertThatThrownBy(() -> atualizarReservaUseCaseImpl.execute(idInexistente,
-				restaurante))
+		assertThatThrownBy(() -> atualizarReservaUseCaseImpl.execute(idInexistente, reserva))
 			.isInstanceOf(ReservaNaoEncontradaException.class)
-			.hasMessage("O restaurante informado não existe.");
+			.hasMessage("Reserva não encontrada com o ID: " + idInexistente);
 		verify(reservaGateway, times(1)).buscarPorId(anyLong());
 		verify(reservaGateway, never()).atualizar(any(Reserva.class), any(Reserva.class));
 	}

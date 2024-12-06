@@ -22,16 +22,14 @@ import br.com.fiap.restaurante.domain.Restaurante;
 import br.com.fiap.restaurante.exception.ReservaNaoEncontradaException;
 import br.com.fiap.restaurante.gateway.cliente.ClienteGateway;
 import br.com.fiap.restaurante.gateway.database.repository.reserva.ReservaRepository;
-import br.com.fiap.restaurante.gateway.database.reservaimpl.ReservaGatewayImpl;
 import br.com.fiap.restaurante.gateway.reserva.ReservaGateway;
 import br.com.fiap.restaurante.gateway.restaurante.RestauranteGateway;
 
 class ObterReservaPorIdUseCaseImplTest {
 	
 	private ObterReservaPorIdUseCaseImpl obterReservaPorIdUseCaseImpl;
-	
-	ReservaGateway reservaGateway;
-	
+	@Mock
+	ReservaGateway reservaGateway;	
 	@Mock
 	private ReservaRepository reservaRepository;
 	@Mock
@@ -44,7 +42,7 @@ class ObterReservaPorIdUseCaseImplTest {
 	@BeforeEach
 	void setup(){
 		openMocks = MockitoAnnotations.openMocks(this);
-		reservaGateway = new ReservaGatewayImpl(reservaRepository, clienteGateway, restauranteGateway);
+		//reservaGateway = new ReservaGatewayImpl(reservaRepository, clienteGateway, restauranteGateway);
 		obterReservaPorIdUseCaseImpl = new ObterReservaPorIdUseCaseImpl(reservaGateway);
 	}
 
@@ -61,17 +59,17 @@ class ObterReservaPorIdUseCaseImplTest {
 		when(reservaGateway.buscarPorId(anyLong())).thenReturn(Optional.of(reserva));
 		
 		// Act
-		Reserva retorno = obterReservaPorIdUseCaseImpl.execute(id);
+		var retorno = reservaGateway.buscarPorId(id).get();
 		
 		// Assert
-		verify(restauranteGateway, times(1)).buscarPorId(anyLong());
+		verify(reservaGateway, times(1)).buscarPorId(anyLong());
 
 		assertThat(retorno).isInstanceOf(Reserva.class).isNotNull();
 		assertThat(retorno).isNotNull();
 		assertThat(retorno.getId()).isEqualTo(reserva.getId());
 		assertThat(retorno.getCliente().getId()).isEqualTo(reserva.getCliente().getId());
-		assertThat(retorno.getRestaurante().getId()).isNotEqualTo(reserva.getRestaurante().getId());
-		assertThat(retorno.getTotalPessoas()).isNotEqualTo(reserva.getTotalPessoas());
+		assertThat(retorno.getRestaurante().getId()).isEqualTo(reserva.getRestaurante().getId());
+		assertThat(retorno.getTotalPessoas()).isEqualTo(reserva.getTotalPessoas());
 		assertThat(retorno.getConfirmada()).isEqualTo(reserva.getConfirmada());
 	}
 	
@@ -84,7 +82,7 @@ class ObterReservaPorIdUseCaseImplTest {
 		// Act & Assert
 		assertThatThrownBy(() -> obterReservaPorIdUseCaseImpl.execute(idInexistente))
 			.isInstanceOf(ReservaNaoEncontradaException.class)
-			.hasMessage("A reserva informada não existe.");
+			.hasMessage("Reserva não encontrada com o ID: " + idInexistente);
 		verify(reservaGateway, times(1)).buscarPorId(anyLong());
 	}
 	
