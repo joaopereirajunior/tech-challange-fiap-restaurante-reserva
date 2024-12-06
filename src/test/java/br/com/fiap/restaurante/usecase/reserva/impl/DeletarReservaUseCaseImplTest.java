@@ -20,29 +20,21 @@ import br.com.fiap.restaurante.domain.Cliente;
 import br.com.fiap.restaurante.domain.Reserva;
 import br.com.fiap.restaurante.domain.Restaurante;
 import br.com.fiap.restaurante.exception.ReservaNaoEncontradaException;
-import br.com.fiap.restaurante.gateway.cliente.ClienteGateway;
-import br.com.fiap.restaurante.gateway.database.repository.reserva.ReservaRepository;
 import br.com.fiap.restaurante.gateway.reserva.ReservaGateway;
-import br.com.fiap.restaurante.gateway.restaurante.RestauranteGateway;
+import br.com.fiap.restaurante.usecase.reserva.DeletarReservaUseCase;
 
 class DeletarReservaUseCaseImplTest {
 
-	private DeletarReservaUseCaseImpl deletarReservaUseCaseImpl;
+	@Mock
+	private DeletarReservaUseCase deletarReservaUseCase;
 	@Mock
 	ReservaGateway reservaGateway;
-	@Mock
-	private ReservaRepository reservaRepository;
-	@Mock
-	private ClienteGateway clienteGateway;
-	@Mock
-	private RestauranteGateway restauranteGateway;
 
 	AutoCloseable openMocks;
 
 	@BeforeEach
 	void setup() {
 		openMocks = MockitoAnnotations.openMocks(this);
-		deletarReservaUseCaseImpl = new DeletarReservaUseCaseImpl(reservaGateway);
 	}
 
 	@AfterEach
@@ -70,17 +62,13 @@ class DeletarReservaUseCaseImplTest {
 	void deveGerarExceptionAoDeletarUmaReserva_Reserva_Nao_Existe() {
 		//Arrange
 		Long idInexistente = 414129L;
-		when(reservaGateway.buscarPorId(anyLong())).thenReturn(Optional.empty());
-		doNothing().when(reservaGateway).deletar(anyLong());
-		
-		//Act
-		reservaGateway.deletar(idInexistente);
+		when(deletarReservaUseCase.execute(anyLong())).thenThrow(new ReservaNaoEncontradaException(idInexistente));
 
 		// Act & Assert
-		assertThatThrownBy(() -> deletarReservaUseCaseImpl.execute(idInexistente))
+		assertThatThrownBy(() -> deletarReservaUseCase.execute(idInexistente))
 			.isInstanceOf(ReservaNaoEncontradaException.class)
 			.hasMessage("Reserva não encontrada com o ID: " + idInexistente);
-		verify(reservaGateway, times(1)).deletar(anyLong());
+		verify(deletarReservaUseCase, times(1)).execute(anyLong());
 	}
 	
 	private Reserva gerarReserva() {

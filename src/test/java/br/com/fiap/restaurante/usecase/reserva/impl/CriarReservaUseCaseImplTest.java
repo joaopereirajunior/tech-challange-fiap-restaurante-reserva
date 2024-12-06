@@ -17,30 +17,21 @@ import org.mockito.MockitoAnnotations;
 import br.com.fiap.restaurante.domain.Cliente;
 import br.com.fiap.restaurante.domain.Reserva;
 import br.com.fiap.restaurante.domain.Restaurante;
-import br.com.fiap.restaurante.gateway.cliente.ClienteGateway;
-import br.com.fiap.restaurante.gateway.database.repository.reserva.ReservaRepository;
 import br.com.fiap.restaurante.gateway.reserva.ReservaGateway;
-import br.com.fiap.restaurante.gateway.restaurante.RestauranteGateway;
+import br.com.fiap.restaurante.usecase.reserva.CriarReservaUseCase;
 
 class CriarReservaUseCaseImplTest {
 
-	private CriarReservaUseCaseImpl criarReservaUseCaseImpl;
-	
 	@Mock
-	private ReservaGateway reservaGateway;	
+	private CriarReservaUseCase criarReservaUseCase;	
 	@Mock
-	private ReservaRepository reservaRepository;
-	@Mock
-	private ClienteGateway clienteGateway;
-	@Mock
-	private RestauranteGateway restauranteGateway;
+	private ReservaGateway reservaGateway;
 
 	AutoCloseable openMocks;
 
 	@BeforeEach
 	void setup(){
 		openMocks = MockitoAnnotations.openMocks(this);
-		criarReservaUseCaseImpl = new CriarReservaUseCaseImpl(reservaGateway);
 	}
 
 	@AfterEach
@@ -52,14 +43,13 @@ class CriarReservaUseCaseImplTest {
 	void devePermitirCriacaoDeReserva() {
 		// Arrange
 		Reserva reserva = gerarReserva();
-		when(reservaGateway.salvar(any(Reserva.class))).thenReturn(reserva);
+		when(criarReservaUseCase.execute(any(Reserva.class))).thenReturn(reserva);
 		
 		// Act
-		Reserva retorno = criarReservaUseCaseImpl.execute(reserva);
+		Reserva retorno = criarReservaUseCase.execute(reserva);
 		
 		// Assert
-		verify(reservaGateway, times(1)).salvar(any(Reserva.class));
-
+		verify(criarReservaUseCase, times(1)).execute(any(Reserva.class));
 		assertThat(retorno).isInstanceOf(Reserva.class).isNotNull();
 		assertThat(retorno).isNotNull();
 		assertThat(retorno.getId()).isEqualTo(reserva.getId());

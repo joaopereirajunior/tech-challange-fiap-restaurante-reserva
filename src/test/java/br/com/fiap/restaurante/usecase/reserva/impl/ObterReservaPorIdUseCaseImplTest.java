@@ -24,10 +24,12 @@ import br.com.fiap.restaurante.gateway.cliente.ClienteGateway;
 import br.com.fiap.restaurante.gateway.database.repository.reserva.ReservaRepository;
 import br.com.fiap.restaurante.gateway.reserva.ReservaGateway;
 import br.com.fiap.restaurante.gateway.restaurante.RestauranteGateway;
+import br.com.fiap.restaurante.usecase.reserva.ObterReservaPorIdUseCase;
 
 class ObterReservaPorIdUseCaseImplTest {
 	
-	private ObterReservaPorIdUseCaseImpl obterReservaPorIdUseCaseImpl;
+	@Mock
+	private ObterReservaPorIdUseCase obterReservaPorIdUseCase;
 	@Mock
 	ReservaGateway reservaGateway;	
 	@Mock
@@ -42,8 +44,6 @@ class ObterReservaPorIdUseCaseImplTest {
 	@BeforeEach
 	void setup(){
 		openMocks = MockitoAnnotations.openMocks(this);
-		//reservaGateway = new ReservaGatewayImpl(reservaRepository, clienteGateway, restauranteGateway);
-		obterReservaPorIdUseCaseImpl = new ObterReservaPorIdUseCaseImpl(reservaGateway);
 	}
 
 	@AfterEach
@@ -77,13 +77,13 @@ class ObterReservaPorIdUseCaseImplTest {
 	void deveGerarExceptionAoObterUmaReserva_Reserva_Nao_Existe() {
 		// Arrange
 		Long idInexistente = 113123L;
-		when(reservaGateway.buscarPorId(anyLong())).thenReturn(Optional.empty());
-		
+		when(obterReservaPorIdUseCase.execute(anyLong())).thenThrow(new ReservaNaoEncontradaException(idInexistente));
+
 		// Act & Assert
-		assertThatThrownBy(() -> obterReservaPorIdUseCaseImpl.execute(idInexistente))
+		assertThatThrownBy(() -> obterReservaPorIdUseCase.execute(idInexistente))
 			.isInstanceOf(ReservaNaoEncontradaException.class)
 			.hasMessage("Reserva não encontrada com o ID: " + idInexistente);
-		verify(reservaGateway, times(1)).buscarPorId(anyLong());
+		verify(obterReservaPorIdUseCase, times(1)).execute(anyLong());
 	}
 	
 	private Reserva gerarReserva() {

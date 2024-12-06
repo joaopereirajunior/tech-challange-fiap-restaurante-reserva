@@ -24,17 +24,13 @@ import br.com.fiap.restaurante.domain.Cliente;
 import br.com.fiap.restaurante.domain.Reserva;
 import br.com.fiap.restaurante.domain.Restaurante;
 import br.com.fiap.restaurante.gateway.cliente.ClienteGateway;
-import br.com.fiap.restaurante.gateway.database.entity.reserva.ReservaEntity;
-import br.com.fiap.restaurante.gateway.database.repository.reserva.ReservaRepository;
 import br.com.fiap.restaurante.gateway.reserva.ReservaGateway;
 import br.com.fiap.restaurante.gateway.restaurante.RestauranteGateway;
 
 class ReservaGatewayImplTest {
 	
 	@Mock
-	ReservaGateway reservaGateway;	
-	@Mock
-	private ReservaRepository reservaRepository;
+	ReservaGateway reservaGateway;
 	@Mock
 	private ClienteGateway clienteGateway;
 	@Mock
@@ -45,7 +41,6 @@ class ReservaGatewayImplTest {
 	@BeforeEach
 	void setup(){
 		openMocks = MockitoAnnotations.openMocks(this);
-		//reservaGateway = new ReservaGatewayImpl(reservaRepository, clienteGateway, restauranteGateway);
 	}
 
 	@AfterEach
@@ -56,7 +51,7 @@ class ReservaGatewayImplTest {
 	@Test
 	void devePermitirCriarReserva() {
 		// Arrange
-		Reserva reserva = gerarReserva();
+		Reserva reserva = gerarReserva(1L);
 		when(reservaGateway.salvar(any(Reserva.class))).thenReturn(reserva);
 		
 		// Act
@@ -71,53 +66,57 @@ class ReservaGatewayImplTest {
 	void devePermitirBuscarReservaPorId() {
         // Arrange
         Long id = 1L;
-        when(reservaRepository.findById(id)).thenReturn(Optional.of(gerarReservaEntity()));
+
+		var reserva = gerarReserva(id);
+
+        when(reservaGateway.buscarPorId(id)).thenReturn(Optional.of(reserva));
 
         // Act
         Optional<Reserva> resultado = reservaGateway.buscarPorId(id);
 
         // Assert
-        verify(reservaRepository, times(1)).findById(anyLong());
+        verify(reservaGateway, times(1)).buscarPorId(anyLong());
         assertThat(resultado).isPresent();
-        assertThat(id).isEqualTo(resultado.get().getId());
-        assertThat(10L).isEqualTo(resultado.get().getTotalPessoas());
+        assertThat(reserva.id).isEqualTo(resultado.get().getId());
+        assertThat(reserva.totalPessoas).isEqualTo(resultado.get().getTotalPessoas());
 	}
 	
 	@Test
 	void devePermitirListarReservas() {
         // Arrange
-        List<ReservaEntity> reservas = Arrays.asList(
-                new ReservaEntity(1L, 1L, 5L, 10L, LocalDateTime.now(), false),
-                new ReservaEntity(2L, 1L, 5L, 10L, LocalDateTime.now(), false)
+        List<Reserva> reservas = Arrays.asList(
+                gerarReserva(1L),
+                gerarReserva(2L),
+				gerarReserva(3L)
             );
 			
-        when(reservaRepository.findAll()).thenReturn(reservas);
+        when(reservaGateway.listarTodas()).thenReturn(reservas);
 
         // Act
         List<Reserva> retorno = reservaGateway.listarTodas();
 
         // Assert
-        verify(reservaRepository, times(1)).findAll();
-        assertThat(retorno).hasSize(2).allSatisfy(
+        verify(reservaGateway, times(1)).listarTodas();
+        assertThat(retorno).hasSize(3).allSatisfy(
         		reserva -> {
         			assertThat(reserva).isNotNull().isInstanceOf(Reserva.class);
         		}
         );
         assertThat(reservas.get(1).getId()).isEqualTo(2L);
-        assertThat(reservas.get(0).getIdClient()).isEqualTo(1L);
+        assertThat(reservas.get(0).getCliente().getId()).isEqualTo(1L);
         assertThat(reservas.get(1).getTotalPessoas()).isEqualTo(10);
 	}
 	
 	@Test
 	void devePermitirListarReservas_retornaListaVaziaQuandoNenhumEncontrado() {
 		// Arrange
-        when(reservaRepository.findAll()).thenReturn(Collections.emptyList());
+        when(reservaGateway.listarTodas()).thenReturn(Collections.emptyList());
 
         // Act
         List<Reserva> retorno = reservaGateway.listarTodas();
 
         // Assert
-        verify(reservaRepository, times(1)).findAll();
+        verify(reservaGateway, times(1)).listarTodas();
         assertThat(retorno).isEmpty();
 	}
 	
@@ -125,52 +124,44 @@ class ReservaGatewayImplTest {
 	void devePermitirRemoverUmaReserva() {
         // Arrange
         Long id = 1L;
-        doNothing().when(reservaRepository).deleteById(id);
+        doNothing().when(reservaGateway).deletar(anyLong());
         
         // Act
-        reservaRepository.deleteById(id);
+        reservaGateway.deletar(id);
 
         // Assert
-        verify(reservaRepository, times(1)).deleteById(anyLong());
+        verify(reservaGateway, times(1)).deletar(anyLong());
 	}
 	
 	@Test
 	void devePermitirAtualizarUmaReserva() {
         // Arrange
-		Reserva reserva = gerarReserva();
-		Reserva reservaModificada = gerarReserva();
+		Reserva reserva = gerarReserva(1L);
+		Reserva reservaModificada = gerarReserva(1L);
 		reservaModificada.setTotalPessoas(20L);
 		reservaModificada.setConfirmada(true);
-		when(reservaRepository.save(any(ReservaEntity.class))).thenReturn(gerarReservaEntity());
+		when(reservaGateway.atualizar(any(Reserva.class), any(Reserva.class))).thenReturn(reservaModificada);
         
         // Act
         Reserva retorno = reservaGateway.atualizar(reserva, reservaModificada);
 		
         // Assert
-        verify(reservaRepository, times(1)).save(any(ReservaEntity.class));
+        verify(reservaGateway, times(1)).atualizar(any(Reserva.class), any(Reserva.class));
         assertThat(retorno).isNotNull();
 		assertThat(retorno.getId()).isEqualTo(reservaModificada.getId());
 		assertThat(retorno.getConfirmada()).isEqualTo(reservaModificada.getConfirmada());		
 		assertThat(retorno.getTotalPessoas()).isEqualTo(reservaModificada.getTotalPessoas());        
 	}
 	
-	private Reserva gerarReserva() {
+	private Reserva gerarReserva(Long id) {
 
 		var cliente = new Cliente(1l, "Juca das Rosas", "07406565940");
 		
 		var restaurante = gerarRestaurante();
 
-		//cliente = clienteGateway.salvar(cliente);
-		
-		//restaurante = restauranteGateway.salvar(restaurante);
-
-		return new Reserva(cliente, restaurante, 1L, 10L, LocalDateTime.now(), false);
+		return new Reserva(cliente, restaurante, id, 10L, LocalDateTime.now(), false);
 	}
 	
-	private ReservaEntity gerarReservaEntity() {
-		return new ReservaEntity(1L, 1L, 5L, 10L, LocalDateTime.now(), false);
-	}
-
 	private Restaurante gerarRestaurante() {
 		return new Restaurante(5L, "Heroe's Burguer", 
 				"Rua de Teste, 59", "Hamburguers e Lanches", "Das 9h às 18h - Seg a Sex.", 15);
