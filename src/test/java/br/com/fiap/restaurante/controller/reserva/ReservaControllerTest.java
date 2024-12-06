@@ -143,7 +143,9 @@ class ReservaControllerTest {
 
     @Test
     void deveDeletarReservaComSucesso() throws Exception {
-        doNothing().when(deletarReservaUseCase).execute(1L);
+        var reserva = gerarReserva(1L);
+
+        when(deletarReservaUseCase.execute(anyLong())).thenReturn(reserva);
 
         mockMvc.perform(delete("/reservas/1")).andExpect(status().isNoContent());
     }
