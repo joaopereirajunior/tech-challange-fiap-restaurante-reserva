@@ -18,18 +18,20 @@ import org.mockito.MockitoAnnotations;
 import br.com.fiap.restaurante.domain.Cliente;
 import br.com.fiap.restaurante.domain.Reserva;
 import br.com.fiap.restaurante.domain.Restaurante;
-import br.com.fiap.restaurante.usecase.reserva.ListarReservasUseCase;
+import br.com.fiap.restaurante.gateway.reserva.ReservaGateway;
 
 class ListarReservaUseCaseImplTest {
 
+	private ListarReservasUseCaseImpl listarReservasUseCaseImpl;
 	@Mock
-	private ListarReservasUseCase listarReservasUseCase;
+	private ReservaGateway reservaGateway;
 
 	AutoCloseable openMocks;
 
 	@BeforeEach
 	void setup(){
 		openMocks = MockitoAnnotations.openMocks(this);
+		listarReservasUseCaseImpl = new ListarReservasUseCaseImpl(reservaGateway);
 	}
 
 	@AfterEach
@@ -41,13 +43,13 @@ class ListarReservaUseCaseImplTest {
 	void devePermitirListarReservas() {
 		// Arrange
 		List<Reserva> listaReservas = gerarReservas();
-		when(listarReservasUseCase.execute()).thenReturn(listaReservas);
+		when(reservaGateway.listarTodas()).thenReturn(listaReservas);
 		
 		// Act
-		List<Reserva> reservasObtidas = listarReservasUseCase.execute();
+		List<Reserva> reservasObtidas = listarReservasUseCaseImpl.execute();
 		
 		// Assert
-		verify(listarReservasUseCase, times(1)).execute();
+		verify(reservaGateway, times(1)).listarTodas();
 		assertThat(reservasObtidas).hasSize(3);
 		assertThat(reservasObtidas).allSatisfy( reserva -> {
 			assertThat(reserva).isNotNull().isInstanceOf(Reserva.class);

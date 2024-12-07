@@ -1,6 +1,8 @@
 package br.com.fiap.restaurante.gateway.database.reservaimpl;
 
+import br.com.fiap.restaurante.domain.Cliente;
 import br.com.fiap.restaurante.domain.Reserva;
+import br.com.fiap.restaurante.domain.Restaurante;
 import br.com.fiap.restaurante.exception.ReservaNaoEncontradaException;
 import br.com.fiap.restaurante.exception.RestauranteNaoEncontradoException;
 import br.com.fiap.restaurante.gateway.cliente.ClienteGateway;
@@ -21,9 +23,6 @@ public class ReservaGatewayImpl implements ReservaGateway {
     private final ReservaRepository reservaRepository;
     private final RestauranteGateway restauranteGateway;
 
-    //@Value("${restaurante.capacidadeReserva}")
-	//private Long capacidadeReserva;
-
     public ReservaGatewayImpl(ReservaRepository reservaRepository, ClienteGateway clienteGateway, RestauranteGateway restauranteGateway) {
         this.reservaRepository = reservaRepository;
         this.clienteGateway = clienteGateway;
@@ -32,8 +31,7 @@ public class ReservaGatewayImpl implements ReservaGateway {
 
     @Override
     public Reserva salvar(Reserva reserva) {
-        //restaurante.VerificarDisponibilidade(reserva.getData(), reserva.getTotalPessoas());
-        var totalDisponibilidade = getTotalDisponibilidade(reserva);
+        Long totalDisponibilidade = getTotalDisponibilidade(reserva);
 
         if(totalDisponibilidade == 0){
             throw new RuntimeException("Reserva indisponível, para a data: " + reserva.getData() + ", escolha uma outra data.");
@@ -52,7 +50,7 @@ public class ReservaGatewayImpl implements ReservaGateway {
         entity.setConfirmada(reserva.getConfirmada());
 
         ReservaEntity savedEntity = reservaRepository.save(entity);
-        var retorno = mapToDomain(savedEntity);
+        Reserva retorno = mapToDomain(savedEntity);
 
         retorno.setCliente(reserva.getCliente());
         retorno.setRestaurante(reserva.getRestaurante());
@@ -60,19 +58,20 @@ public class ReservaGatewayImpl implements ReservaGateway {
         return retorno;
     }
 
-    public Reserva atualizar(Reserva reservaRecuperada, Reserva reservaModificada){
-
+    public Reserva atualizar(Long id, Reserva reservaModificada){
+        Reserva reservaRecuperada = this.buscarPorId(id);
+        
         reservaRecuperada.setCliente(reservaModificada.getCliente());
         reservaRecuperada.setConfirmada(reservaModificada.getConfirmada());
         reservaRecuperada.setData(reservaModificada.getData());
         reservaRecuperada.setRestaurante(reservaModificada.getRestaurante());
         reservaRecuperada.setTotalPessoas(reservaModificada.getTotalPessoas());
 
-        var entity = mapToEntity(reservaRecuperada);
+        ReservaEntity entity = mapToEntity(reservaModificada);
 
         reservaRepository.save(entity);
 
-        var retorno = mapToDomain(entity);
+        Reserva retorno = mapToDomain(entity);
 
         retorno.setCliente(reservaModificada.getCliente());
         retorno.setRestaurante(reservaModificada.getRestaurante());
@@ -81,8 +80,14 @@ public class ReservaGatewayImpl implements ReservaGateway {
     }
 
     @Override
-    public Optional<Reserva> buscarPorId(Long id) {
-        return reservaRepository.findById(id).map(entity -> mapToDomain(entity));
+    public Reserva buscarPorId(Long id) {
+        Optional<ReservaEntity> entity = reservaRepository.findById(id);
+
+        if(!entity.isPresent()){
+            throw new ReservaNaoEncontradaException(id);
+        }
+
+        return entity.map(item -> mapToDomain(item)).get();
     }
 
     @Override
@@ -91,22 +96,20 @@ public class ReservaGatewayImpl implements ReservaGateway {
     }
 
     @Override
-    public void deletar(Long id) {
-        var reserva = buscarPorId(id);
-
-        if(!reserva.isPresent()){
-            throw new ReservaNaoEncontradaException(id);
-        }
+    public Reserva deletar(Long id) {
+        Reserva reserva = buscarPorId(id);
 
         reservaRepository.deleteById(id);
+
+        return reserva;
     }
 
     private Reserva mapToDomain(ReservaEntity entity)
     {
-        var cliente = clienteGateway.buscarPorId(entity.getIdClient());
-        var restaurante =restauranteGateway.buscarPorId(entity.getIdRestaurante());
+        Optional<Cliente> cliente = clienteGateway.buscarPorId(entity.getIdClient());
+        Optional<Restaurante> restaurante = restauranteGateway.buscarPorId(entity.getIdRestaurante());
 
-        var reserva = new Reserva(
+        Reserva reserva = new Reserva(
             null,
             null,
             entity.getId(),
@@ -140,7 +143,7 @@ public class ReservaGatewayImpl implements ReservaGateway {
 
     private Long getTotalDisponibilidade(Reserva reserva)
     {
-        var restaurante = Optional.of(reserva.getRestaurante());
+        Optional<Restaurante> restaurante = Optional.of(reserva.getRestaurante());
 
         if(!restaurante.isPresent()){
             throw new RestauranteNaoEncontradoException(reserva.getRestaurante().getId());
@@ -150,7 +153,7 @@ public class ReservaGatewayImpl implements ReservaGateway {
             restaurante = restauranteGateway.buscarPorId(reserva.getRestaurante().getId());
         }
 
-        var totalReservado = reservaRepository.findAll().stream().filter(r -> r.getData().equals(reserva.getData())).collect(Collectors.toList()).stream().mapToLong(t -> t.getTotalPessoas()).sum();
+        Long totalReservado = reservaRepository.findAll().stream().filter(r -> r.getData().equals(reserva.getData())).collect(Collectors.toList()).stream().mapToLong(t -> t.getTotalPessoas()).sum();
 
         return (restaurante.get().getCapacidade() - totalReservado);
     }

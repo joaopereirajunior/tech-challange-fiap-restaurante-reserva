@@ -13,4 +13,8 @@ public class Reserva {
     public Long totalPessoas;
     public LocalDateTime data;
     public Boolean confirmada;
+    
+    public void setId(Long id) {
+    	this.id = id;
+    }
 }

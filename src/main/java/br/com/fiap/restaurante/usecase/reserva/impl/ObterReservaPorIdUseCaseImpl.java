@@ -1,9 +1,9 @@
 package br.com.fiap.restaurante.usecase.reserva.impl;
 
 import br.com.fiap.restaurante.domain.Reserva;
-import br.com.fiap.restaurante.exception.ReservaNaoEncontradaException;
 import br.com.fiap.restaurante.gateway.reserva.ReservaGateway;
 import br.com.fiap.restaurante.usecase.reserva.ObterReservaPorIdUseCase;
+
 import org.springframework.stereotype.Service;
 
 
@@ -17,6 +17,6 @@ public class ObterReservaPorIdUseCaseImpl implements ObterReservaPorIdUseCase {
 
     @Override
     public Reserva execute(Long id) {
-        return reservaGateway.buscarPorId(id).orElseThrow(() -> new ReservaNaoEncontradaException(id));
+        return reservaGateway.buscarPorId(id);
     }
 }

@@ -69,16 +69,15 @@ class ReservaGatewayImplTest {
 
 		var reserva = gerarReserva(id);
 
-        when(reservaGateway.buscarPorId(id)).thenReturn(Optional.of(reserva));
+        when(reservaGateway.buscarPorId(id)).thenReturn(reserva);
 
         // Act
-        Optional<Reserva> resultado = reservaGateway.buscarPorId(id);
+        Reserva resultado = reservaGateway.buscarPorId(id);
 
         // Assert
         verify(reservaGateway, times(1)).buscarPorId(anyLong());
-        assertThat(resultado).isPresent();
-        assertThat(reserva.id).isEqualTo(resultado.get().getId());
-        assertThat(reserva.totalPessoas).isEqualTo(resultado.get().getTotalPessoas());
+        assertThat(reserva.id).isEqualTo(resultado.getId());
+        assertThat(reserva.totalPessoas).isEqualTo(resultado.getTotalPessoas());
 	}
 	
 	@Test
@@ -124,7 +123,7 @@ class ReservaGatewayImplTest {
 	void devePermitirRemoverUmaReserva() {
         // Arrange
         Long id = 1L;
-        doNothing().when(reservaGateway).deletar(anyLong());
+        when(reservaGateway.deletar(anyLong())).thenReturn(any(Reserva.class));
         
         // Act
         reservaGateway.deletar(id);
@@ -140,13 +139,13 @@ class ReservaGatewayImplTest {
 		Reserva reservaModificada = gerarReserva(1L);
 		reservaModificada.setTotalPessoas(20L);
 		reservaModificada.setConfirmada(true);
-		when(reservaGateway.atualizar(any(Reserva.class), any(Reserva.class))).thenReturn(reservaModificada);
+		when(reservaGateway.atualizar(anyLong(), any(Reserva.class))).thenReturn(reservaModificada);
         
         // Act
-        Reserva retorno = reservaGateway.atualizar(reserva, reservaModificada);
+        Reserva retorno = reservaGateway.atualizar(reserva.id, reservaModificada);
 		
         // Assert
-        verify(reservaGateway, times(1)).atualizar(any(Reserva.class), any(Reserva.class));
+        verify(reservaGateway, times(1)).atualizar(anyLong(), any(Reserva.class));
         assertThat(retorno).isNotNull();
 		assertThat(retorno.getId()).isEqualTo(reservaModificada.getId());
 		assertThat(retorno.getConfirmada()).isEqualTo(reservaModificada.getConfirmada());		

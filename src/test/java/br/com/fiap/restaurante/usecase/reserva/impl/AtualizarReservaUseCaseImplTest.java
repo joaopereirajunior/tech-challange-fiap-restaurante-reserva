@@ -9,7 +9,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,12 +21,10 @@ import br.com.fiap.restaurante.domain.Reserva;
 import br.com.fiap.restaurante.domain.Restaurante;
 import br.com.fiap.restaurante.exception.ReservaNaoEncontradaException;
 import br.com.fiap.restaurante.gateway.reserva.ReservaGateway;
-import br.com.fiap.restaurante.usecase.reserva.AtualizarReservaUseCase;
 
 class AtualizarReservaUseCaseImplTest {
-
-	@Mock
-	private AtualizarReservaUseCase atualizarReservaUseCase;
+	
+	private AtualizarReservaUseCaseImpl atualizarReservaUseCaseImpl;
 	@Mock
 	private ReservaGateway reservaGateway;
 	AutoCloseable openMocks;
@@ -35,6 +32,7 @@ class AtualizarReservaUseCaseImplTest {
 	@BeforeEach
 	void setup(){
 		openMocks = MockitoAnnotations.openMocks(this);
+		atualizarReservaUseCaseImpl = new AtualizarReservaUseCaseImpl(reservaGateway);
 	}
 
 	@AfterEach
@@ -52,17 +50,17 @@ class AtualizarReservaUseCaseImplTest {
 
 		reservaModificada.setTotalPessoas(20L);
 		reservaModificada.setConfirmada(true);
-		when(reservaGateway.buscarPorId(anyLong())).thenReturn(Optional.of(reserva));
-		when(atualizarReservaUseCase.execute(anyLong(), any(Reserva.class))).thenReturn(reservaModificada);
+		when(reservaGateway.buscarPorId(anyLong())).thenReturn(reserva);
+		when(reservaGateway.atualizar(anyLong(), any(Reserva.class))).thenReturn(reservaModificada);
 		
 		// Act				
-		reserva = reservaGateway.buscarPorId(anyLong()).get();
+		reserva = reservaGateway.buscarPorId(anyLong());
 
-		var reservaObtida = atualizarReservaUseCase.execute(reserva.getId(), reservaModificada);
+		var reservaObtida = atualizarReservaUseCaseImpl.execute(reserva.getId(), reservaModificada);
 
 		// Assert
 		verify(reservaGateway, times(1)).buscarPorId(anyLong());
-		verify(atualizarReservaUseCase, times(1)).execute(anyLong(), any(Reserva.class));
+		verify(reservaGateway, times(1)).atualizar(anyLong(), any(Reserva.class));
 		assertThat(reservaObtida).isInstanceOf(Reserva.class).isNotNull();
 		assertThat(reserva.getId()).isEqualTo(reservaObtida.getId());
 		assertThat(reserva.getData()).isEqualTo(reservaObtida.getData());
@@ -77,17 +75,17 @@ class AtualizarReservaUseCaseImplTest {
 		// Arrange
 		Long idInexistente = 113123L;
 				
-		when(reservaGateway.buscarPorId(anyLong())).thenReturn(Optional.of(gerarReserva()));
-		when(atualizarReservaUseCase.execute(anyLong(), any(Reserva.class))).thenThrow(new ReservaNaoEncontradaException(idInexistente));
+		when(reservaGateway.buscarPorId(anyLong())).thenReturn(gerarReserva());
+		when(reservaGateway.atualizar(anyLong(), any(Reserva.class))).thenThrow(new ReservaNaoEncontradaException(idInexistente));
 
-		Reserva reserva = reservaGateway.buscarPorId(anyLong()).get();
+		Reserva reserva = reservaGateway.buscarPorId(anyLong());
 
 		// Act & Assert
-		assertThatThrownBy(() -> atualizarReservaUseCase.execute(idInexistente, reserva))
+		assertThatThrownBy(() -> atualizarReservaUseCaseImpl.execute(idInexistente, reserva))
 			.isInstanceOf(ReservaNaoEncontradaException.class)
 			.hasMessage("Reserva não encontrada com o ID: " + idInexistente);
 		verify(reservaGateway, times(1)).buscarPorId(anyLong());
-		verify(atualizarReservaUseCase, times(1)).execute(anyLong(), any(Reserva.class));
+		verify(reservaGateway, times(1)).atualizar(anyLong(), any(Reserva.class));
 	}
 	
 	private Reserva gerarReserva() {

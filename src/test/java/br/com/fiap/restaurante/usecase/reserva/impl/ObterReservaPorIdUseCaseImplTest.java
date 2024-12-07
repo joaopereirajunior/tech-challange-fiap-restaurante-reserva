@@ -8,7 +8,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,12 +23,10 @@ import br.com.fiap.restaurante.gateway.cliente.ClienteGateway;
 import br.com.fiap.restaurante.gateway.database.repository.reserva.ReservaRepository;
 import br.com.fiap.restaurante.gateway.reserva.ReservaGateway;
 import br.com.fiap.restaurante.gateway.restaurante.RestauranteGateway;
-import br.com.fiap.restaurante.usecase.reserva.ObterReservaPorIdUseCase;
 
 class ObterReservaPorIdUseCaseImplTest {
 	
-	@Mock
-	private ObterReservaPorIdUseCase obterReservaPorIdUseCase;
+	private ObterReservaPorIdUseCaseImpl obterReservaPorIdUseCase;
 	@Mock
 	ReservaGateway reservaGateway;	
 	@Mock
@@ -44,6 +41,7 @@ class ObterReservaPorIdUseCaseImplTest {
 	@BeforeEach
 	void setup(){
 		openMocks = MockitoAnnotations.openMocks(this);
+		obterReservaPorIdUseCase = new ObterReservaPorIdUseCaseImpl(reservaGateway);
 	}
 
 	@AfterEach
@@ -56,10 +54,10 @@ class ObterReservaPorIdUseCaseImplTest {
 		// Arrange
 		Reserva reserva = gerarReserva();
 		Long id = reserva.getId();
-		when(reservaGateway.buscarPorId(anyLong())).thenReturn(Optional.of(reserva));
+		when(reservaGateway.buscarPorId(anyLong())).thenReturn(reserva);
 		
 		// Act
-		var retorno = reservaGateway.buscarPorId(id).get();
+		var retorno = obterReservaPorIdUseCase.execute(id);
 		
 		// Assert
 		verify(reservaGateway, times(1)).buscarPorId(anyLong());
@@ -77,13 +75,13 @@ class ObterReservaPorIdUseCaseImplTest {
 	void deveGerarExceptionAoObterUmaReserva_Reserva_Nao_Existe() {
 		// Arrange
 		Long idInexistente = 113123L;
-		when(obterReservaPorIdUseCase.execute(anyLong())).thenThrow(new ReservaNaoEncontradaException(idInexistente));
+		when(reservaGateway.buscarPorId(anyLong())).thenThrow(new ReservaNaoEncontradaException(idInexistente));
 
 		// Act & Assert
 		assertThatThrownBy(() -> obterReservaPorIdUseCase.execute(idInexistente))
 			.isInstanceOf(ReservaNaoEncontradaException.class)
 			.hasMessage("Reserva não encontrada com o ID: " + idInexistente);
-		verify(obterReservaPorIdUseCase, times(1)).execute(anyLong());
+		verify(reservaGateway, times(1)).buscarPorId(anyLong());
 	}
 	
 	private Reserva gerarReserva() {
