@@ -57,8 +57,6 @@ class ReservaGatewayImplIT {
 		
 		assertThat(retorno).isNotNull().isInstanceOf(Reserva.class);
 		assertThat(retorno.getId()).isNotNull();
-		//assertThat(retorno.getRestaurante()).isSameAs(reservaGerada.getRestaurante());
-		//assertThat(retorno.getCliente()).isSameAs(reservaGerada.getCliente());
 		assertThat(retorno.getTotalPessoas()).isNotNull();
 
 		assertThat(retorno.getData()).isNotNull();
