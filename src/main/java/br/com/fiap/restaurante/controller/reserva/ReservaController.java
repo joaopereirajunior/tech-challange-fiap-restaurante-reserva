@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -31,7 +32,7 @@ public class ReservaController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Reserva> obterReservaById(@PathVariable Long id) {
+    public ResponseEntity<Optional<Reserva>> obterReservaById(@PathVariable Long id) {
         return ResponseEntity.ok(buscarReservaPorIdUseCase.execute(id));
     }
 

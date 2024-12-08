@@ -23,9 +23,9 @@ import br.com.fiap.restaurante.domain.Restaurante;
 import br.com.fiap.restaurante.exception.ReservaNaoEncontradaException;
 import br.com.fiap.restaurante.gateway.reserva.ReservaGateway;
 
-class AtualizarReservaUseCaseImplTest {
+class FinalizarReservaUseCaseImplTest {
 	
-	private AtualizarReservaUseCaseImpl atualizarReservaUseCaseImpl;
+	private FinalizarReservaUseCaseImpl finalizarReservaUseCaseImpl;
 	@Mock
 	private ReservaGateway reservaGateway;
 	AutoCloseable openMocks;
@@ -33,7 +33,7 @@ class AtualizarReservaUseCaseImplTest {
 	@BeforeEach
 	void setup(){
 		openMocks = MockitoAnnotations.openMocks(this);
-		atualizarReservaUseCaseImpl = new AtualizarReservaUseCaseImpl(reservaGateway);
+		finalizarReservaUseCaseImpl = new FinalizarReservaUseCaseImpl(reservaGateway);
 	}
 
 	@AfterEach
@@ -42,57 +42,53 @@ class AtualizarReservaUseCaseImplTest {
 	}
 	
 	@Test
-	void devePermitirAtualizacaoDeReserva() {
+	void devePermitirFinalizarReserva() {
 		// Arrange
 		Reserva reserva = gerarReserva();
-		Reserva reservaModificada = gerarReserva();
+		Reserva reservaFinalizada = gerarReserva();
 
-		reserva.setData(reservaModificada.data);
+		reserva.setData(reservaFinalizada.data);
 
-		reservaModificada.setTotalPessoas(20L);
-		reservaModificada.setConfirmada(true);
+		reservaFinalizada.setFinalizada(true);
 		when(reservaGateway.buscarPorId(anyLong())).thenReturn(Optional.of(reserva));
-		when(reservaGateway.atualizar(anyLong(), any(Reserva.class))).thenReturn(reservaModificada);
+		when(reservaGateway.finalizar(anyLong(), any(Reserva.class))).thenReturn(reservaFinalizada);
 		
 		// Act				
 		var reservaOptional = reservaGateway.buscarPorId(anyLong());
-
+		
 		reserva = reservaOptional.get();
-
-		var reservaObtida = atualizarReservaUseCaseImpl.execute(reserva.getId(), reservaModificada);
+		
+		var reservaObtida = finalizarReservaUseCaseImpl.execute(reserva.getId(), reservaFinalizada);
 
 		// Assert
 		verify(reservaGateway, times(1)).buscarPorId(anyLong());
-		verify(reservaGateway, times(1)).atualizar(anyLong(), any(Reserva.class));
+		verify(reservaGateway, times(1)).finalizar(anyLong(), any(Reserva.class));
 		assertThat(reservaObtida).isInstanceOf(Reserva.class).isNotNull();
 		assertThat(reserva.getId()).isEqualTo(reservaObtida.getId());
 		assertThat(reserva.getData()).isEqualTo(reservaObtida.getData());
-		assertThat(reserva.getTotalPessoas()).isNotEqualTo(reservaObtida.getTotalPessoas());
-		assertThat(reserva.getConfirmada()).isNotEqualTo(reservaObtida.getConfirmada());
+		assertThat(reserva.getFinalizada()).isNotEqualTo(reservaObtida.getFinalizada());
 		assertThat(reserva.getCliente().getId()).isEqualTo(reservaObtida.getCliente().getId());
 		assertThat(reserva.getRestaurante().getId()).isEqualTo(reservaObtida.getRestaurante().getId());
 	}
 	
 	@Test
-	void deveGerarExceptionAoAtualizarReserva_Reserva_Nao_Existe() {
+	void deveGerarExceptionAoFinalizarReserva_Reserva_Nao_Existe() {
 		// Arrange
 		Long idInexistente = 113123L;
 				
 		when(reservaGateway.buscarPorId(anyLong())).thenReturn(Optional.of(gerarReserva()));
-		when(reservaGateway.atualizar(anyLong(), any(Reserva.class))).thenThrow(new ReservaNaoEncontradaException(idInexistente));
+		when(reservaGateway.finalizar(anyLong(), any(Reserva.class))).thenThrow(new ReservaNaoEncontradaException(idInexistente));
 
-		Optional<Reserva> reservaOptional = reservaGateway.buscarPorId(anyLong());
-
-		var reserva =  reservaOptional.get();
+		Optional<Reserva> reserva = reservaGateway.buscarPorId(anyLong());
 
 		// Act & Assert
-		assertThatThrownBy(() -> atualizarReservaUseCaseImpl.execute(idInexistente, reserva))
+		assertThatThrownBy(() -> finalizarReservaUseCaseImpl.execute(idInexistente, reserva.get()))
 			.isInstanceOf(ReservaNaoEncontradaException.class)
 			.hasMessage("Reserva não encontrada com o ID: " + idInexistente);
 		verify(reservaGateway, times(1)).buscarPorId(anyLong());
-		verify(reservaGateway, times(1)).atualizar(anyLong(), any(Reserva.class));
+		verify(reservaGateway, times(1)).finalizar(anyLong(), any(Reserva.class));
 	}
-
+	
 	private Reserva gerarReserva() {
 		var cliente = new Cliente(1l, "Juca das Rosas", "07406565940");
 		var restaurante = gerarRestaurante();

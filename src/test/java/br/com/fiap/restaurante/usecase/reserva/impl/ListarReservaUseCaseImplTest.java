@@ -69,7 +69,7 @@ class ListarReservaUseCaseImplTest {
 	private Reserva gerarReserva(Long id) {
 		var cliente = new Cliente(1l, "Juca das Rosas", "07406565940");
 		var restaurante = gerarRestaurante();
-		return new Reserva(cliente, restaurante, id, 10L, LocalDateTime.now(), false);
+		return new Reserva(cliente, restaurante, id, 10L, LocalDateTime.now(), false, false, 0L, null);
 	}
 	
 	private Restaurante gerarRestaurante() {

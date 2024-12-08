@@ -2,37 +2,43 @@ package br.com.fiap.restaurante.usecase.reserva.impl;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.context.SpringBootTest;
 import br.com.fiap.restaurante.domain.Cliente;
 import br.com.fiap.restaurante.domain.Reserva;
 import br.com.fiap.restaurante.domain.Restaurante;
-import br.com.fiap.restaurante.gateway.reserva.ReservaGateway;
+import br.com.fiap.restaurante.gateway.cliente.ClienteGateway;
+import br.com.fiap.restaurante.gateway.restaurante.RestauranteGateway;
+import jakarta.transaction.Transactional;
 
-class CriarReservaUseCaseImplTest {
+@SpringBootTest(properties = "spring.main.lazy-initialization=true")
+@AutoConfigureTestDatabase
+@Transactional
+class CriarReservaUseCaseImplIT {
 
+	@Autowired
 	private CriarReservaUseCaseImpl criarReservaUseCaseImpl;	
-	
-	@Mock
-	private ReservaGateway reservaGateway;
+
+	@Autowired
+	private ClienteGateway clienteGateway;
+
+	@Autowired
+	private RestauranteGateway restauranteGateway;
 
 	AutoCloseable openMocks;
 
 	@BeforeEach
 	void setup(){
 		openMocks = MockitoAnnotations.openMocks(this);
-		criarReservaUseCaseImpl = new CriarReservaUseCaseImpl(reservaGateway);
+		registrarCliente();
+		registrarRestaurante();
 	}
 
 	@AfterEach
@@ -42,15 +48,9 @@ class CriarReservaUseCaseImplTest {
 	
 	@Test
 	void devePermitirCriacaoDeReserva() {
-		// Arrange
-		Reserva reserva = gerarReserva();
-		when(reservaGateway.salvar(any(Reserva.class))).thenReturn(reserva);
-		
-		// Act
+		Reserva reserva = gerarReserva(1L);
 		Reserva retorno = criarReservaUseCaseImpl.execute(reserva);
 		
-		// Assert
-		verify(reservaGateway, times(1)).salvar(any(Reserva.class));
 		assertThat(retorno).isInstanceOf(Reserva.class).isNotNull();
 		assertThat(retorno).isNotNull();
 		assertThat(retorno.getId()).isEqualTo(reserva.getId());
@@ -62,25 +62,40 @@ class CriarReservaUseCaseImplTest {
 
 	@Test
 	void deveGerarExceptionSeNaoHouverReserva_Disponibilidade_Para_Data_Selecionada() {
-		// Arrange
-		Reserva reserva = gerarReserva();
-		when(reservaGateway.salvar(any(Reserva.class))).thenThrow(new RuntimeException("Reserva indisponível, para a data selecionada, escolha uma outra data."));
 		
-		// Act & Assert
+		Reserva reserva = gerarReserva(1L);
+		reserva.setTotalPessoas(151L);
+		
 		assertThatThrownBy(() -> criarReservaUseCaseImpl.execute(reserva))
 			.isInstanceOf(RuntimeException.class)
 			.hasMessage("Reserva indisponível, para a data selecionada, escolha uma outra data.");
-		verify(reservaGateway, times(1)).salvar(any(Reserva.class));
 	}
 	
-	private Reserva gerarReserva() {
-		var cliente = new Cliente(1L, "Juca das Rosas", "07406565940");
+	private Reserva gerarReserva(Long id) {
+
+		var cliente = new Cliente(1l, "João Silva", "07406565940");
+		
 		var restaurante = gerarRestaurante();
-		return new Reserva(cliente, restaurante, 1L, 10L, LocalDateTime.now(), false, false, 0L, null);
+
+		return new Reserva(cliente, restaurante, id, 10L, LocalDateTime.now(), false, false, 0L, null);
+	}
+	
+	private Restaurante gerarRestaurante() {
+		return new Restaurante(1L, "Heroe's Burguer", 
+				"Rua de Teste, 59", "Hamburguers e Lanches", "Das 9h às 18h - Seg a Sex.", 150);
 	}
 
-	private Restaurante gerarRestaurante() {
-		return new Restaurante(5L, "Heroe's Burguer", 
-				"Rua de Teste, 59", "Hamburguers e Lanches", "Das 9h às 18h - Seg a Sex.", 15);
+
+	private Cliente registrarCliente(){
+		var cliente = new Cliente(1l, "João Silva", "07406565940");
+		clienteGateway.salvar(cliente);
+		return cliente;
+	}
+
+	private Restaurante registrarRestaurante() {
+		var restaurante = gerarRestaurante();
+		restauranteGateway.salvar(restaurante);
+
+		return restaurante;
 	}
 }

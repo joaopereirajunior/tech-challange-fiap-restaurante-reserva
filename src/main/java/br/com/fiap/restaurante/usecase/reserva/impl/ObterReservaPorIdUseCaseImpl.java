@@ -4,6 +4,8 @@ import br.com.fiap.restaurante.domain.Reserva;
 import br.com.fiap.restaurante.gateway.reserva.ReservaGateway;
 import br.com.fiap.restaurante.usecase.reserva.ObterReservaPorIdUseCase;
 
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 
 
@@ -16,7 +18,7 @@ public class ObterReservaPorIdUseCaseImpl implements ObterReservaPorIdUseCase {
     }
 
     @Override
-    public Reserva execute(Long id) {
+    public Optional<Reserva> execute(Long id) {
         return reservaGateway.buscarPorId(id);
     }
 }

@@ -2,9 +2,10 @@ package br.com.fiap.restaurante.usecase.reserva.impl;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
 
@@ -43,7 +44,7 @@ class DeletarReservaUseCaseImplTest {
 		// Arrange
 		Reserva reserva = gerarReserva();
 		Long id = reserva.getId();
-		when(reservaGateway.deletar(anyLong())).thenReturn(reserva);
+		doNothing().when(reservaGateway).deletar(anyLong());
 
 		// Act
 		deletarReservaUseCaseImpl.execute(id);
@@ -57,7 +58,7 @@ class DeletarReservaUseCaseImplTest {
 	void deveGerarExceptionAoDeletarUmaReserva_Reserva_Nao_Existe() {
 		//Arrange
 		Long idInexistente = 414129L;
-		when(reservaGateway.deletar(anyLong())).thenThrow(new ReservaNaoEncontradaException(idInexistente));
+		doThrow(new ReservaNaoEncontradaException(idInexistente)).when(reservaGateway).deletar(anyLong());
 
 		// Act & Assert
 		assertThatThrownBy(() -> deletarReservaUseCaseImpl.execute(idInexistente))
@@ -69,7 +70,7 @@ class DeletarReservaUseCaseImplTest {
 	private Reserva gerarReserva() {
 		var cliente = new Cliente(1L, "Juca das Rosas", "07406565940");
 		var restaurante = gerarRestaurante();
-		return new Reserva(cliente, restaurante, 1L, 10L, LocalDateTime.now(), false);
+		return new Reserva(cliente, restaurante, 1L, 10L, LocalDateTime.now(), false, false, 0L, null);
 	}
 
 	private Restaurante gerarRestaurante() {

@@ -13,8 +13,21 @@ public class Reserva {
     public Long totalPessoas;
     public LocalDateTime data;
     public Boolean confirmada;
-    
-    public void setId(Long id) {
-    	this.id = id;
+    public Boolean finalizada;
+    public Long notaAvaliacao;
+    public String comentarioAvaliacao;
+
+    public void setNotaAvaliacao(Long notaAvaliacao){
+        if(notaAvaliacao > 5L){
+            this.notaAvaliacao = 5L;
+            return;
+        }
+
+        if(notaAvaliacao < 0){
+            this.notaAvaliacao = 0L;
+            return;
+        }
+        
+        this.notaAvaliacao = notaAvaliacao;
     }
 }

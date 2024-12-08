@@ -8,6 +8,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -54,10 +55,12 @@ class ObterReservaPorIdUseCaseImplTest {
 		// Arrange
 		Reserva reserva = gerarReserva();
 		Long id = reserva.getId();
-		when(reservaGateway.buscarPorId(anyLong())).thenReturn(reserva);
+		when(reservaGateway.buscarPorId(anyLong())).thenReturn(Optional.of(reserva));
 		
 		// Act
-		var retorno = obterReservaPorIdUseCase.execute(id);
+		var retornoOptional = obterReservaPorIdUseCase.execute(id);
+
+		var retorno = retornoOptional.get();
 		
 		// Assert
 		verify(reservaGateway, times(1)).buscarPorId(anyLong());
@@ -87,7 +90,7 @@ class ObterReservaPorIdUseCaseImplTest {
 	private Reserva gerarReserva() {
 		var cliente = new Cliente(1L, "Juca das Rosas", "07406565940");
 		var restaurante = gerarRestaurante();
-		return new Reserva(cliente, restaurante, 1L, 10L, LocalDateTime.now(), false);
+		return new Reserva(cliente, restaurante, 1L, 10L, LocalDateTime.now(), false, false, 0L, null);
 	}
 
 	private Restaurante gerarRestaurante() {

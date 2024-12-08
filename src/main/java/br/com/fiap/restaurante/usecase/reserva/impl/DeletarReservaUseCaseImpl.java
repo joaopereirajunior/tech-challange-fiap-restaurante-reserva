@@ -1,6 +1,5 @@
 package br.com.fiap.restaurante.usecase.reserva.impl;
 
-import br.com.fiap.restaurante.domain.Reserva;
 import br.com.fiap.restaurante.gateway.reserva.ReservaGateway;
 import br.com.fiap.restaurante.usecase.reserva.DeletarReservaUseCase;
 
@@ -15,7 +14,7 @@ public class DeletarReservaUseCaseImpl implements DeletarReservaUseCase {
     }
 
     @Override
-    public Reserva execute(Long id) {
-        return reservaGateway.deletar(id);
+    public void execute(Long id) {
+        reservaGateway.deletar(id);
     }
 }

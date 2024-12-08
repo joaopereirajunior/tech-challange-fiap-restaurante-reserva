@@ -23,18 +23,12 @@ import org.mockito.MockitoAnnotations;
 import br.com.fiap.restaurante.domain.Cliente;
 import br.com.fiap.restaurante.domain.Reserva;
 import br.com.fiap.restaurante.domain.Restaurante;
-import br.com.fiap.restaurante.gateway.cliente.ClienteGateway;
 import br.com.fiap.restaurante.gateway.reserva.ReservaGateway;
-import br.com.fiap.restaurante.gateway.restaurante.RestauranteGateway;
 
 class ReservaGatewayImplTest {
 	
 	@Mock
 	ReservaGateway reservaGateway;
-	@Mock
-	private ClienteGateway clienteGateway;
-	@Mock
-	private RestauranteGateway restauranteGateway;
 	
 	AutoCloseable openMocks;
 
@@ -69,15 +63,19 @@ class ReservaGatewayImplTest {
 
 		var reserva = gerarReserva(id);
 
-        when(reservaGateway.buscarPorId(id)).thenReturn(reserva);
+        when(reservaGateway.buscarPorId(id)).thenReturn(Optional.of(reserva));
 
         // Act
-        Reserva resultado = reservaGateway.buscarPorId(id);
+        Optional<Reserva> resultado = reservaGateway.buscarPorId(id);
 
         // Assert
         verify(reservaGateway, times(1)).buscarPorId(anyLong());
-        assertThat(reserva.id).isEqualTo(resultado.getId());
-        assertThat(reserva.totalPessoas).isEqualTo(resultado.getTotalPessoas());
+		assertThat(resultado).isPresent();
+		resultado.ifPresent(resultadoRecuperado ->{
+			assertThat(resultadoRecuperado).isInstanceOf(Reserva.class);
+			assertThat(reserva.id).isEqualTo(resultadoRecuperado.getId());
+			assertThat(reserva.totalPessoas).isEqualTo(resultadoRecuperado.getTotalPessoas());
+		});
 	}
 	
 	@Test
@@ -123,7 +121,7 @@ class ReservaGatewayImplTest {
 	void devePermitirRemoverUmaReserva() {
         // Arrange
         Long id = 1L;
-        when(reservaGateway.deletar(anyLong())).thenReturn(any(Reserva.class));
+        doNothing().when(reservaGateway).deletar(anyLong());
         
         // Act
         reservaGateway.deletar(id);
@@ -151,6 +149,26 @@ class ReservaGatewayImplTest {
 		assertThat(retorno.getConfirmada()).isEqualTo(reservaModificada.getConfirmada());		
 		assertThat(retorno.getTotalPessoas()).isEqualTo(reservaModificada.getTotalPessoas());        
 	}
+
+	@Test
+	void devePermitirFinalizarReserva() {
+		// Arrange
+		Reserva reserva = gerarReserva(1L);
+		Reserva reservaFinalizada = gerarReserva(1L);
+		reservaFinalizada.setNotaAvaliacao(20L);
+		
+		when(reservaGateway.finalizar(anyLong(), any(Reserva.class))).thenReturn(reservaFinalizada);
+        
+        // Act
+        Reserva retorno = reservaGateway.finalizar(reserva.id, reservaFinalizada);
+		
+        // Assert
+        verify(reservaGateway, times(1)).finalizar(anyLong(), any(Reserva.class));
+        assertThat(retorno).isNotNull();
+		assertThat(retorno.getId()).isEqualTo(reservaFinalizada.getId());
+		assertThat(retorno.getFinalizada()).isEqualTo(reservaFinalizada.getFinalizada());		
+		assertThat(retorno.getNotaAvaliacao()).isEqualTo(reservaFinalizada.getNotaAvaliacao());  
+	}
 	
 	private Reserva gerarReserva(Long id) {
 
@@ -158,7 +176,7 @@ class ReservaGatewayImplTest {
 		
 		var restaurante = gerarRestaurante();
 
-		return new Reserva(cliente, restaurante, id, 10L, LocalDateTime.now(), false);
+		return new Reserva(cliente, restaurante, id, 10L, LocalDateTime.now(), false, false, 0L, null);
 	}
 	
 	private Restaurante gerarRestaurante() {

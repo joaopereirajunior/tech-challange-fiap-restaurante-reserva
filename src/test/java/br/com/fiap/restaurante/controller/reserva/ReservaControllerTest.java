@@ -2,6 +2,7 @@ package br.com.fiap.restaurante.controller.reserva;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -13,6 +14,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -111,7 +113,7 @@ class ReservaControllerTest {
     void deveObterReservaPorIdComSucesso() throws Exception {
     	Long id = 5L;
         Reserva reserva = gerarReserva(id);
-        when(obterReservaPorIdUseCase.execute(anyLong())).thenReturn(reserva);
+        when(obterReservaPorIdUseCase.execute(anyLong())).thenReturn(Optional.of(reserva));
 
         mockMvc.perform(get("/reservas/{id}", id))
                 .andExpect(status().isOk())
@@ -141,10 +143,8 @@ class ReservaControllerTest {
     }
 
     @Test
-    void deveDeletarReservaComSucesso() throws Exception {
-        var reserva = gerarReserva(1L);
-
-        when(deletarReservaUseCase.execute(anyLong())).thenReturn(reserva);
+    void deveDeletarReservaComSucesso() throws Exception {        
+        doNothing().when(deletarReservaUseCase).execute(anyLong());
 
         mockMvc.perform(delete("/reservas/1")).andExpect(status().isNoContent());
     }
@@ -172,7 +172,7 @@ class ReservaControllerTest {
 	private Reserva gerarReserva(Long id) {
 		var cliente = new Cliente(1l, "Juca das Rosas", "07406565940");
 		var restaurante = gerarRestaurante();
-		return new Reserva(cliente, restaurante, id, 10L, LocalDateTime.now(), false);
+		return new Reserva(cliente, restaurante, id, 10L, LocalDateTime.now(), false, false, 0L, null);
 	}
 	
 	private Restaurante gerarRestaurante() {
