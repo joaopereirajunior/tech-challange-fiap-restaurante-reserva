@@ -40,7 +40,7 @@ public class AlterarClienteUseCaseTest {
     @Test
     void devePermitirAlterarUmCliente() {
         //ARRANGE
-        Cliente cliente = new Cliente(1L,"José","12345678901");
+        var cliente = Cliente.builder().id(1L).nome("José").cpf("12345678901").build();
         when(clienteGateway.buscarPorId(anyLong())).thenReturn(Optional.of(cliente));
         when(clienteGateway.salvar(any(Cliente.class))).thenReturn(cliente);
 
@@ -61,7 +61,7 @@ public class AlterarClienteUseCaseTest {
     void deveLancarExecaoQuandoClienteNaoExistir() {
         //ARRANGE PREPARAR
         Long idInexistente = 432L;
-        Cliente cliente = new Cliente(1L,"José","12345678901");
+        var cliente = Cliente.builder().id(1L).nome("José").cpf("12345678901").build();
         when(clienteGateway.buscarPorId(anyLong())).thenReturn(Optional.empty());
 
         //ACT EXECUTAR
