@@ -71,7 +71,6 @@ public class AlterarClienteUseCaseTest {
         //ASSERT VERIFICAR
         verify(clienteGateway, times(1)).buscarPorId(anyLong());
         verify(clienteGateway, never()).salvar(any(Cliente.class));
-
     }
 
 
