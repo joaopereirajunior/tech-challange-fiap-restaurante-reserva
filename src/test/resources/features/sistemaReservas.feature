@@ -1,5 +1,5 @@
 # language: pt
-Funcionalidade: API - Cadastro de Clientes
+Funcionalidade: API - Sistema de reservas
 
 Cenário: Registrar um novo cliente
   Quando submeter um novo cliente
