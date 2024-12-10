@@ -50,9 +50,14 @@ public class ReservaGatewayImpl implements ReservaGateway {
         ReservaEntity savedEntity = reservaRepository.save(entity);
         Reserva retorno = mapToDomain(savedEntity);
 
-        retorno.setCliente(reserva.getCliente());
-        retorno.setRestaurante(reserva.getRestaurante());
+        if(retorno.cliente == null){
+            retorno.setCliente(reserva.getCliente());
+        }
 
+        if(retorno.restaurante == null){
+            retorno.setRestaurante(reserva.getRestaurante());
+        }
+        
         return retorno;
     }
 
@@ -155,6 +160,12 @@ public class ReservaGatewayImpl implements ReservaGateway {
     private Long getTotalDisponibilidade(Reserva reserva)
     {
         Restaurante restaurante = reserva.getRestaurante();
+
+        var restauranteRecuperado = restauranteGateway.buscarPorId(reserva.getRestaurante().getId());
+
+        if(restauranteRecuperado.isPresent()){
+            restaurante = restauranteRecuperado.get();
+        }
 
         Long totalReservado = reservaRepository.findAll().stream().filter(r -> r.getData().equals(reserva.getData())).collect(Collectors.toList()).stream().mapToLong(t -> t.getTotalPessoas()).sum();
 
