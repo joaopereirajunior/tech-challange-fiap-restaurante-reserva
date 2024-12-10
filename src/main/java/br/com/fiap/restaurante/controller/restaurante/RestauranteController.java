@@ -43,7 +43,7 @@ public class RestauranteController {
     }
     
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<Restaurante>> obterRestaurantePorId(@PathVariable Long id) {
+    public ResponseEntity<Restaurante> obterRestaurantePorId(@PathVariable Long id) {
         return ResponseEntity.ok(obterRestaurantePorIdUseCase.execute(id));
     }
     

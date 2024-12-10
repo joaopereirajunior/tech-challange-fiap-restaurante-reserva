@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import br.com.fiap.restaurante.domain.Restaurante;
+import br.com.fiap.restaurante.exception.RestauranteNaoEncontradoException;
 import br.com.fiap.restaurante.gateway.restaurante.RestauranteGateway;
 import br.com.fiap.restaurante.usecase.restaurante.ObterRestaurantePorIdUseCase;
 
@@ -18,9 +19,15 @@ public class ObterRestaurantePorIdUseCaseImpl implements ObterRestaurantePorIdUs
     }
 	
 	@Override
-	public Optional<Restaurante> execute(Long id) {
+	public Restaurante execute(Long id) {
 		
-		return restauranteGateway.buscarPorId(id);
+		Optional<Restaurante> entity = restauranteGateway.buscarPorId(id);
+		
+		if (!entity.isPresent()) { 
+			throw new RestauranteNaoEncontradoException("O restaurante informado não existe.");
+		}
+
+		return entity.get();
 	}
 
 }

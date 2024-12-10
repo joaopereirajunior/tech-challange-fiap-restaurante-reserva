@@ -1,5 +1,7 @@
 package br.com.fiap.restaurante.controller.cliente;
 
+import br.com.fiap.restaurante.controller.cliente.dto.ClienteRequestDTO;
+import br.com.fiap.restaurante.controller.cliente.mapper.ClienteMapper;
 import br.com.fiap.restaurante.domain.Cliente;
 import br.com.fiap.restaurante.usecase.cliente.*;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +30,9 @@ public class ClienteController {
     }
 
     @PostMapping
-    public ResponseEntity<Cliente> criarCliente(@RequestBody Cliente cliente) {
+    public ResponseEntity<Cliente> criarCliente(@RequestBody ClienteRequestDTO clienteRequestDTO) {
+        var cliente = ClienteMapper.toDomain(clienteRequestDTO);
+
         return ResponseEntity.ok(criarClienteUseCase.execute(cliente));
     }
 

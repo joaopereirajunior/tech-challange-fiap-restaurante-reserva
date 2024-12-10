@@ -23,7 +23,7 @@ public class RemoverRestauranteUseCaseImpl implements RemoverRestauranteUseCase 
 		
 		Optional<Restaurante> entity = restauranteGateway.buscarPorId(id);
 		
-		if (entity == null) { 
+		if (!entity.isPresent()) { 
 			throw new RestauranteNaoEncontradoException("O restaurante informado não existe.");
 		}
 		
