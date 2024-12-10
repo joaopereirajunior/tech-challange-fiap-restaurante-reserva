@@ -10,21 +10,21 @@ public class Reserva {
     public Cliente cliente;
     public Restaurante restaurante;
     public Long id;
-    public Long totalPessoas;
+    public int totalPessoas;
     public LocalDateTime data;
     public Boolean confirmada;
     public Boolean finalizada;
-    public Long notaAvaliacao;
+    public int notaAvaliacao;
     public String comentarioAvaliacao;
 
-    public void setNotaAvaliacao(Long notaAvaliacao){
-        if(notaAvaliacao > 5L){
-            this.notaAvaliacao = 5L;
+    public void setNotaAvaliacao(int notaAvaliacao){
+        if(notaAvaliacao > 5){
+            this.notaAvaliacao = 5;
             return;
         }
 
         if(notaAvaliacao < 0){
-            this.notaAvaliacao = 0L;
+            this.notaAvaliacao = 0;
             return;
         }
         

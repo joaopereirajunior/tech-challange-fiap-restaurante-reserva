@@ -90,7 +90,7 @@ class ObterReservaPorIdUseCaseImplTest {
 	private Reserva gerarReserva() {
 		var cliente = new Cliente(1L, "Juca das Rosas", "07406565940");
 		var restaurante = gerarRestaurante();
-		return new Reserva(cliente, restaurante, 1L, 10L, LocalDateTime.now(), false, false, 0L, null);
+		return new Reserva(cliente, restaurante, 1L, 10, LocalDateTime.now(), false, false, 0, null);
 	}
 
 	private Restaurante gerarRestaurante() {

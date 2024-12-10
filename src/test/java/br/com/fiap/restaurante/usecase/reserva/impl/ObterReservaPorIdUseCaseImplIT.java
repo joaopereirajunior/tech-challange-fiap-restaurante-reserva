@@ -45,11 +45,10 @@ class ObterReservaPorIdUseCaseImplIT {
 	
 	@Test
 	void devePermitirObterUmaReservaPeloId() {
-		Long id = 1L;
 		
-		Reserva reserva = registrarReserva(id);
+		Reserva reserva = registrarReserva();
 
-		var retornoOptional = obterReservaPorIdUseCase.execute(id);
+		var retornoOptional = obterReservaPorIdUseCase.execute(reserva.getId());
 
 		assertThat(retornoOptional).isPresent();
 
@@ -62,13 +61,13 @@ class ObterReservaPorIdUseCaseImplIT {
 		});
 	}
 	
-	private Reserva gerarReserva(Long id) {
+	private Reserva gerarReserva() {
 
 		var cliente = new Cliente(1l, "João Silva", "07406565940");
 		
 		var restaurante = gerarRestaurante();
 
-		return new Reserva(cliente, restaurante, id, 10L, LocalDateTime.now(), false, false, 0L, null);
+		return new Reserva(cliente, restaurante, 0L, 10, LocalDateTime.now(), false, false, 0, null);
 	}
 	
 	private Restaurante gerarRestaurante() {
@@ -89,8 +88,8 @@ class ObterReservaPorIdUseCaseImplIT {
 		return restaurante;
 	}
 
-	private Reserva registrarReserva(Long id) {		
-		var reserva = gerarReserva(id);
+	private Reserva registrarReserva() {		
+		var reserva = gerarReserva();
 		var retorno = reservaGatewayImpl.salvar(reserva);
 		return retorno;
 	}

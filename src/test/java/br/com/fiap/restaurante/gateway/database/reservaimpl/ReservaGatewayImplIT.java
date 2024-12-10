@@ -51,9 +51,11 @@ class ReservaGatewayImplIT {
 	@Test
 	void devePermitirCriarReserva() {
 		
-		Reserva reservaGerada =  gerarReserva(1L);
+		Reserva reservaGerada =  gerarReserva();
 
-		Reserva retorno = registrarReserva(1L);
+		Reserva retorno = registrarReserva();
+
+		reservaGerada.setId(retorno.getId());
 		
 		assertThat(retorno).isNotNull().isInstanceOf(Reserva.class);
 		assertThat(retorno.getId()).isNotNull();
@@ -67,10 +69,9 @@ class ReservaGatewayImplIT {
 	}
 	
 	@Test
-	void devePermitirBuscarReservaPorId() {
-        Long id = 2L;
-		var reserva = registrarReserva(id);
-        Optional<Reserva> reservaOptional = reservaGatewayImpl.buscarPorId(id);
+	void devePermitirBuscarReservaPorId() {        
+		var reserva = registrarReserva();
+        Optional<Reserva> reservaOptional = reservaGatewayImpl.buscarPorId(reserva.getId());
 
 		assertThat(reservaOptional).isPresent();
 		
@@ -87,9 +88,9 @@ class ReservaGatewayImplIT {
 	
 	@Test
 	void devePermitirListarReservas() {
-		registrarReserva(3L);
-		registrarReserva(4L);
-		registrarReserva(5L);
+		registrarReserva();
+		registrarReserva();
+		registrarReserva();
 		
         List<Reserva> retorno = reservaGatewayImpl.listarTodas();
 
@@ -107,25 +108,24 @@ class ReservaGatewayImplIT {
 	}
 	
 	@Test
-	void devePermitirRemoverUmaReserva() {
-        Long id = 6L;
-		registrarReserva(id);
-        reservaGatewayImpl.deletar(id);
-		Optional<Reserva> reservaExcluida = reservaGatewayImpl.buscarPorId(id);
+	void devePermitirRemoverUmaReserva() {        
+		var reserva = registrarReserva();
+        reservaGatewayImpl.deletar(reserva.getId());
+		Optional<Reserva> reservaExcluida = reservaGatewayImpl.buscarPorId(reserva.getId());
 		assertThat(reservaExcluida).isEmpty();
 	}
 	
 	@Test
 	void devePermitirAtualizarUmaReserva() {
         
-		Reserva reserva = registrarReserva(7L);
+		Reserva reserva = registrarReserva();
 
 		Optional<Reserva> reservaOptional = reservaGatewayImpl.buscarPorId(reserva.getId());
 
 		var reservaModificada = reservaOptional.get();
 		reservaModificada.setCliente(reserva.getCliente());
 		reservaModificada.setRestaurante(reserva.getRestaurante());
-		reservaModificada.setTotalPessoas(20L);
+		reservaModificada.setTotalPessoas(20);
 		reservaModificada.setConfirmada(true);
 		
 		Reserva retorno = reservaGatewayImpl.atualizar(reserva.getId(), reservaModificada);
@@ -138,7 +138,7 @@ class ReservaGatewayImplIT {
 
 	@Test
 	void devePermitirFinalizarReserva() {
-		Reserva reserva = registrarReserva(8L);
+		Reserva reserva = registrarReserva();
 		Optional<Reserva> reservaOptional = reservaGatewayImpl.buscarPorId(reserva.getId());
 
 		var reservaModificada = reservaOptional.get();
@@ -146,9 +146,9 @@ class ReservaGatewayImplIT {
 		reservaModificada.setRestaurante(reserva.getRestaurante());
 		reservaModificada.setFinalizada(true);
 		reservaModificada.setRestaurante(reserva.getRestaurante());
-		reservaModificada.setNotaAvaliacao(-10L);
-		reservaModificada.setNotaAvaliacao(10L);
-		reservaModificada.setNotaAvaliacao(5L);
+		reservaModificada.setNotaAvaliacao(-10);
+		reservaModificada.setNotaAvaliacao(10);
+		reservaModificada.setNotaAvaliacao(5);
 
         Reserva retorno = reservaGatewayImpl.finalizar(reserva.getId(), reservaModificada);
 		
@@ -158,13 +158,13 @@ class ReservaGatewayImplIT {
 		assertThat(retorno.getNotaAvaliacao()).isEqualTo(reservaModificada.getNotaAvaliacao()); 
 	}
 	
-	private Reserva gerarReserva(Long id) {
+	private Reserva gerarReserva() {
 
 		var cliente = new Cliente(1l, "João Silva", "07406565940");
 		
 		var restaurante = gerarRestaurante();
 
-		return new Reserva(cliente, restaurante, id, 10L, LocalDateTime.now(), false, false, 0L, null);
+		return new Reserva(cliente, restaurante, 0L, 10, LocalDateTime.now(), false, false, 0, null);
 	}
 	
 	private Restaurante gerarRestaurante() {
@@ -185,8 +185,8 @@ class ReservaGatewayImplIT {
 		return restaurante;
 	}
 
-	private Reserva registrarReserva(Long id) {		
-		var reserva = gerarReserva(id);
+	private Reserva registrarReserva() {		
+		var reserva = gerarReserva();
 		var retorno = reservaGatewayImpl.salvar(reserva);
 		return retorno;
 	}

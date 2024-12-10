@@ -55,10 +55,11 @@ class AtualizarReservaUseCaseImplIT {
 	
 	@Test
 	void devePermitirAtualizacaoDeReserva() {		
-		Reserva reserva = registrarReserva(1L);
-		Reserva reservaModificada = gerarReserva(1L);
+		Reserva reserva = registrarReserva();
+		Reserva reservaModificada = gerarReserva();
 
-		reservaModificada.setTotalPessoas(20L);
+		reservaModificada.setId(reserva.getId());
+		reservaModificada.setTotalPessoas(20);
 		reservaModificada.setConfirmada(true);
 		
 		var reservaOptional = reservaGatewayImpl.buscarPorId(reserva.getId());
@@ -77,20 +78,20 @@ class AtualizarReservaUseCaseImplIT {
 	void deveGerarExceptionAoAtualizarReserva_Reserva_Nao_Existe() {
 		Long idInexistente = 113123L;
 
-		Reserva reserva = registrarReserva(1L);
+		Reserva reserva = registrarReserva();
 
 		assertThatThrownBy(() -> atualizarReservaUseCaseImpl.execute(idInexistente, reserva))
 			.isInstanceOf(ReservaNaoEncontradaException.class)
 			.hasMessage("Reserva não encontrada com o ID: " + idInexistente);
 	}
 	
-	private Reserva gerarReserva(Long id) {
+	private Reserva gerarReserva() {
 
 		var cliente = new Cliente(1l, "João Silva", "07406565940");
 		
 		var restaurante = gerarRestaurante();
 
-		return new Reserva(cliente, restaurante, id, 10L, LocalDateTime.now(), false, false, 0L, null);
+		return new Reserva(cliente, restaurante, 0L, 10, LocalDateTime.now(), false, false, 0, null);
 	}
 	
 	private Restaurante gerarRestaurante() {
@@ -112,8 +113,8 @@ class AtualizarReservaUseCaseImplIT {
 		return restaurante;
 	}
 
-	private Reserva registrarReserva(Long id) {		
-		var reserva = gerarReserva(id);
+	private Reserva registrarReserva() {		
+		var reserva = gerarReserva();
 		var retorno = reservaGatewayImpl.salvar(reserva);
 		return retorno;
 	}

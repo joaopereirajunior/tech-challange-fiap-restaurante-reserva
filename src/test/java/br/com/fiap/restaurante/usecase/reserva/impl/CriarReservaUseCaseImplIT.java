@@ -48,8 +48,10 @@ class CriarReservaUseCaseImplIT {
 	
 	@Test
 	void devePermitirCriacaoDeReserva() {
-		Reserva reserva = gerarReserva(1L);
+		Reserva reserva = gerarReserva();
 		Reserva retorno = criarReservaUseCaseImpl.execute(reserva);
+		
+		reserva.setId(retorno.getId());
 		
 		assertThat(retorno).isInstanceOf(Reserva.class).isNotNull();
 		assertThat(retorno).isNotNull();
@@ -63,21 +65,21 @@ class CriarReservaUseCaseImplIT {
 	@Test
 	void deveGerarExceptionSeNaoHouverReserva_Disponibilidade_Para_Data_Selecionada() {
 		
-		Reserva reserva = gerarReserva(1L);
-		reserva.setTotalPessoas(151L);
+		Reserva reserva = gerarReserva();
+		reserva.setTotalPessoas(151);
 		
 		assertThatThrownBy(() -> criarReservaUseCaseImpl.execute(reserva))
 			.isInstanceOf(RuntimeException.class)
 			.hasMessage("Reserva indisponível, para a data selecionada, escolha uma outra data.");
 	}
 	
-	private Reserva gerarReserva(Long id) {
+	private Reserva gerarReserva() {
 
 		var cliente = new Cliente(1l, "João Silva", "07406565940");
 		
 		var restaurante = gerarRestaurante();
 
-		return new Reserva(cliente, restaurante, id, 10L, LocalDateTime.now(), false, false, 0L, null);
+		return new Reserva(cliente, restaurante, 0L, 10, LocalDateTime.now(), false, false, 0, null);
 	}
 	
 	private Restaurante gerarRestaurante() {

@@ -127,7 +127,7 @@ class ReservaControllerTest {
     	Long id = 5L;
         Reserva reservaAtualizada = gerarReserva(id);
         reservaAtualizada.setConfirmada(true);
-        reservaAtualizada.setTotalPessoas(20L);
+        reservaAtualizada.setTotalPessoas(20);
         
         when(atualizarReservaUseCase.execute(anyLong(), any(Reserva.class))).thenReturn(reservaAtualizada);
 
@@ -172,7 +172,7 @@ class ReservaControllerTest {
 	private Reserva gerarReserva(Long id) {
 		var cliente = new Cliente(1l, "Juca das Rosas", "07406565940");
 		var restaurante = gerarRestaurante();
-		return new Reserva(cliente, restaurante, id, 10L, LocalDateTime.now(), false, false, 0L, null);
+		return new Reserva(cliente, restaurante, id, 10, LocalDateTime.now(), false, false, 0, null);
 	}
 	
 	private Restaurante gerarRestaurante() {

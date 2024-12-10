@@ -135,7 +135,7 @@ class ReservaGatewayImplTest {
         // Arrange
 		Reserva reserva = gerarReserva(1L);
 		Reserva reservaModificada = gerarReserva(1L);
-		reservaModificada.setTotalPessoas(20L);
+		reservaModificada.setTotalPessoas(20);
 		reservaModificada.setConfirmada(true);
 		when(reservaGateway.atualizar(anyLong(), any(Reserva.class))).thenReturn(reservaModificada);
         
@@ -155,7 +155,7 @@ class ReservaGatewayImplTest {
 		// Arrange
 		Reserva reserva = gerarReserva(1L);
 		Reserva reservaFinalizada = gerarReserva(1L);
-		reservaFinalizada.setNotaAvaliacao(20L);
+		reservaFinalizada.setNotaAvaliacao(20);
 		
 		when(reservaGateway.finalizar(anyLong(), any(Reserva.class))).thenReturn(reservaFinalizada);
         
@@ -176,7 +176,7 @@ class ReservaGatewayImplTest {
 		
 		var restaurante = gerarRestaurante();
 
-		return new Reserva(cliente, restaurante, id, 10L, LocalDateTime.now(), false, false, 0L, null);
+		return new Reserva(cliente, restaurante, id, 10, LocalDateTime.now(), false, false, 0, null);
 	}
 	
 	private Restaurante gerarRestaurante() {

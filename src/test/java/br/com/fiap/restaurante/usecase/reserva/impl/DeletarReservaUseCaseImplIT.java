@@ -44,29 +44,28 @@ class DeletarReservaUseCaseImplIT {
 	}
 
 	@Test
-	void devePermitirDeletarUmaReserva() {		
-		Long id = 1L;
+	void devePermitirDeletarUmaReserva() {
 
-		registrarReserva(id);		
+		var reserva = registrarReserva();		
 
-		var reservaOptional = reservaGateway.buscarPorId(id);
+		var reservaOptional = reservaGateway.buscarPorId(reserva.getId());
 
 		assertThat(reservaOptional).isPresent();
 
-		deletarReservaUseCaseImpl.execute(id);
+		deletarReservaUseCaseImpl.execute(reserva.getId());
 		
-		reservaOptional = reservaGateway.buscarPorId(id);
+		reservaOptional = reservaGateway.buscarPorId(reserva.getId());
 		
 		assertThat(reservaOptional).isEmpty();
 	}
 	
-	private Reserva gerarReserva(Long id) {
+	private Reserva gerarReserva() {
 
 		var cliente = new Cliente(1l, "João Silva", "07406565940");
 		
 		var restaurante = gerarRestaurante();
 
-		return new Reserva(cliente, restaurante, id, 10L, LocalDateTime.now(), false, false, 0L, null);
+		return new Reserva(cliente, restaurante, 0L, 10, LocalDateTime.now(), false, false, 0, null);
 	}
 	
 	private Restaurante gerarRestaurante() {
@@ -88,8 +87,8 @@ class DeletarReservaUseCaseImplIT {
 		return restaurante;
 	}
 
-	private Reserva registrarReserva(Long id) {		
-		var reserva = gerarReserva(id);
+	private Reserva registrarReserva() {		
+		var reserva = gerarReserva();
 		var retorno = reservaGatewayImpl.salvar(reserva);
 		return retorno;
 	}
