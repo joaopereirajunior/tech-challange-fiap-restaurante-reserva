@@ -2,20 +2,20 @@ package br.com.fiap.restaurante.usecase.reserva.impl;
 
 import br.com.fiap.restaurante.domain.Reserva;
 import br.com.fiap.restaurante.gateway.reserva.ReservaGateway;
-import br.com.fiap.restaurante.usecase.reserva.EfetuarReservaUseCase;
+import br.com.fiap.restaurante.usecase.reserva.FinalizarReservaUseCase;
 
 import org.springframework.stereotype.Service;
 
 @Service
-public class EfetuarReservaUseCaseImpl implements EfetuarReservaUseCase {
+public class FinalizarReservaUseCaseImpl implements FinalizarReservaUseCase {
     private final ReservaGateway reservaGateway;
 
-    public EfetuarReservaUseCaseImpl(ReservaGateway reservaGateway) {
+    public FinalizarReservaUseCaseImpl(ReservaGateway reservaGateway) {
         this.reservaGateway = reservaGateway;
     }
 
     @Override
-    public Reserva execute(Reserva reserva) {
-        return reservaGateway.salvar(reserva);
+    public Reserva execute(Long id, Reserva reserva) {
+        return reservaGateway.finalizar(id, reserva);
     }
 }

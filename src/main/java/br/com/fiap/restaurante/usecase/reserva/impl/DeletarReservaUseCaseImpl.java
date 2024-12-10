@@ -14,7 +14,7 @@ public class DeletarReservaUseCaseImpl implements DeletarReservaUseCase {
     }
 
     @Override
-    public void execute(Long id) {        
+    public void execute(Long id) {
         reservaGateway.deletar(id);
     }
 }
