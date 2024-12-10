@@ -17,7 +17,6 @@ public class CriarClienteUseCaseImpl implements CriarClienteUseCase {
     @Override
     public Cliente execute(Cliente cliente)
     {
-        System.out.println("criou o cliente aqui");
         return clienteGateway.salvar(cliente);
     }
 }
