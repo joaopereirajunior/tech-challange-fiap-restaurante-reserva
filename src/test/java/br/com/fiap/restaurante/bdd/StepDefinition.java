@@ -16,18 +16,17 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchemaInClasspath;
 
-
 public class StepDefinition {
     private Response response;
 
     private Cliente clienteResponse;
     private Restaurante restauranteResponse;
     private Reserva reservaResponse;
-    
+
     private String ENDPOINT_CLIENTES = "http://localhost:9090/clientes";
     private String ENDPOINT_RESTAURANTES = "http://localhost:9090/restaurantes";
     private String ENDPOINT_RESERVAS = "http://localhost:9090/reservas";
-    
+
     @Quando("submeter um novo cliente")
     public Cliente submeterNovoCliente() {
         var clienteRequest = RestauranteHelper.gerarClienteRequest();
@@ -196,8 +195,6 @@ public class StepDefinition {
                 .statusCode(HttpStatus.NO_CONTENT.value());
     }
 
-
-
     @Quando("submeter uma nova reserva")
     public Reserva submeterNovaReserva() {
         var reservaRequest = RestauranteHelper.gerarReservaRequest();
@@ -281,7 +278,5 @@ public class StepDefinition {
         response.then()
                 .statusCode(HttpStatus.NO_CONTENT.value());
     }
-
-
 
 }
