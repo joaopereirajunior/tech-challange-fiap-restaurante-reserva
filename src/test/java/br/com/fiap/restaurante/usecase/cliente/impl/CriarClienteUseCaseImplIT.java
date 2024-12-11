@@ -14,7 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
+@SpringBootTest(properties = "spring.main.lazy-initialization=true")
 @AutoConfigureTestDatabase
 @Transactional
 public class CriarClienteUseCaseImplIT {
