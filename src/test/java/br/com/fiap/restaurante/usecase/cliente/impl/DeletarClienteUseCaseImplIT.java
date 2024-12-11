@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
-@SpringBootTest
+@SpringBootTest(properties = "spring.main.lazy-initialization=true")
 @AutoConfigureTestDatabase
 @Transactional
 public class DeletarClienteUseCaseImplIT {

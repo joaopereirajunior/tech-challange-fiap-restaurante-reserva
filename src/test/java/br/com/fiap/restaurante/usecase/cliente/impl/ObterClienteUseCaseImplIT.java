@@ -15,7 +15,7 @@ import java.util.Arrays;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
-@SpringBootTest
+@SpringBootTest(properties = "spring.main.lazy-initialization=true")
 @Transactional
 @AutoConfigureTestDatabase
 public class ObterClienteUseCaseImplIT {
