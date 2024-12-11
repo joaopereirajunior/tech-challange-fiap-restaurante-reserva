@@ -16,8 +16,7 @@ public class ObterClienteUseCaseImpl implements ObterClienteUseCase {
         this.clienteGateway = clienteGateway;
     }
         @Override
-    public List<Cliente> execute()
-    {
+    public List<Cliente> execute() {
         return clienteGateway.listarTodos();
 
     }
