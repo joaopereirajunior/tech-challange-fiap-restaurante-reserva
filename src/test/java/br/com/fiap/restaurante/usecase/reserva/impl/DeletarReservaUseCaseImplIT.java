@@ -1,12 +1,15 @@
 package br.com.fiap.restaurante.usecase.reserva.impl;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
 import java.time.LocalDateTime;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import br.com.fiap.restaurante.domain.Cliente;
 import br.com.fiap.restaurante.domain.Reserva;
@@ -19,6 +22,7 @@ import jakarta.transaction.Transactional;
 
 @SpringBootTest(properties = "spring.main.lazy-initialization=true")
 @AutoConfigureTestDatabase
+@ActiveProfiles("test")
 @Transactional
 class DeletarReservaUseCaseImplIT {
 	
