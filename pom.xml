@@ -115,6 +115,12 @@
             <scope>test</scope>
         </dependency>
 		 <!-- para testar controller de forma mais fluida -->
+		 <dependency>
+	    	<groupId>io.qameta.allure</groupId>
+		    	<artifactId>allure-rest-assured</artifactId>
+    		<version>2.13.9</version>
+		</dependency>
+
         <dependency>
             <groupId>io.rest-assured</groupId>
             <artifactId>spring-mock-mvc</artifactId>
