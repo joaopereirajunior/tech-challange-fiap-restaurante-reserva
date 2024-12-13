@@ -1,0 +1,73 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "Reserva": {
+      "type": "object",
+      "properties": {
+        "cliente": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "nome": {
+              "type": "string"
+            },
+            "cpf": {
+              "type": "string"
+            }
+          },
+          "required": ["nome", "cpf"]
+        },
+        "restaurante": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "nome": {
+              "type": "string"
+            },
+            "localizacao": {
+              "type": "string"
+            },
+            "tipoCozinha": {
+              "type": "string"
+            },
+            "horarioFuncionamento": {
+              "type": "string"
+            },
+            "capacidade": {
+              "type": "integer"
+            }
+          },
+          "required": ["nome", "localizacao", "tipoCozinha", "horarioFuncionamento", "capacidade"]
+        },
+        "id": {
+          "type": "integer"
+        },
+        "totalPessoas": {
+          "type": "integer"
+        },
+        "data": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "confirmada": {
+          "type": "boolean"
+        },
+        "finalizada": {
+          "type": "boolean"
+        },
+        "notaAvaliacao": {
+          "type": "integer"
+        },
+        "comentarioAvaliacao": {
+          "type": "string"
+        }
+      },
+      "required": ["totalPessoas", "data", "confirmada", "finalizada", "notaAvaliacao", "comentarioAvaliacao"]
+    }
+  }
+}
