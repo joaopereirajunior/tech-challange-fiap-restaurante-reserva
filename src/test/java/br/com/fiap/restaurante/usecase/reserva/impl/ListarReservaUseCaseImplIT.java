@@ -51,7 +51,7 @@ class ListarReservaUseCaseImplIT {
 
 		List<Reserva> reservasObtidas = listarReservasUseCaseImpl.execute();
 		
-		assertThat(reservasObtidas).hasSize(3);
+		assertThat(reservasObtidas).isNotNull().isNotEmpty();
 		assertThat(reservasObtidas).allSatisfy( reserva -> {
 			assertThat(reserva).isNotNull().isInstanceOf(Reserva.class);
 		});

@@ -23,9 +23,9 @@ public class StepDefinition {
     private Restaurante restauranteResponse;
     private Reserva reservaResponse;
 
-    private String ENDPOINT_CLIENTES = "http://localhost:9090/clientes";
-    private String ENDPOINT_RESTAURANTES = "http://localhost:9090/restaurantes";
-    private String ENDPOINT_RESERVAS = "http://localhost:9090/reservas";
+    private String ENDPOINT_CLIENTES = "http://localhost:8080/clientes";
+    private String ENDPOINT_RESTAURANTES = "http://localhost:8080/restaurantes";
+    private String ENDPOINT_RESERVAS = "http://localhost:8080/reservas";
 
     @Quando("submeter um novo cliente")
     public Cliente submeterNovoCliente() {
