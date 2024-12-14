@@ -20,7 +20,8 @@ public class AlterarClienteUseCaseImpl implements AlterarClienteUseCase {
         if(id == null) {
             throw new IllegalArgumentException("ID cliente não pode ser nulo");
         }
-        Cliente clienteExistente = clienteGateway.buscarPorId(id)
+        
+        clienteGateway.buscarPorId(id)
                 .orElseThrow(() -> {
                     throw new ClienteNaoEncontradoException("Cliente não encontrado");
                 });

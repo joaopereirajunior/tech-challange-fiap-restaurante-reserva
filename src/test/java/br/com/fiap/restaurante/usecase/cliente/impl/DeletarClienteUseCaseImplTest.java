@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import javax.management.MBeanServerConnection;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
