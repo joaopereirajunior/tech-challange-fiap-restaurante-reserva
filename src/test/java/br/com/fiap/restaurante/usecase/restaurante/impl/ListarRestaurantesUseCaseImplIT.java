@@ -1,24 +1,11 @@
 package br.com.fiap.restaurante.usecase.restaurante.impl;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.*;
 
 import br.com.fiap.restaurante.domain.Restaurante;
-import br.com.fiap.restaurante.exception.RestauranteNaoEncontradoException;
-import br.com.fiap.restaurante.gateway.database.restauranteimpl.RestauranteGatewayImpl;
 import br.com.fiap.restaurante.gateway.restaurante.RestauranteGateway;
-import org.assertj.core.api.AssertionsForInterfaceTypes;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -39,9 +26,6 @@ class ListarRestaurantesUseCaseImplIT {
 
 	@Autowired
 	RestauranteGateway restauranteGateway;
-
-	@Autowired
-	private RestauranteGatewayImpl restaurateGatewayImpl;
 
 	@BeforeEach
 	void setup(){

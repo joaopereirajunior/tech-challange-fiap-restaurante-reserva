@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -38,7 +37,7 @@ public class ObterClienteUseCaseTest {
     void devePermitirObterTodosClientes() {
         // Arrange
         Cliente cliente = new Cliente(1L, "José", "12345678901");
-        List<Cliente> clientes = Arrays.asList(cliente);
+        
         when(clienteGateway.listarTodos()).thenReturn(List.of(cliente));
         // Act
         List<Cliente> clientesObtidos = obterClienteUseCase.execute();

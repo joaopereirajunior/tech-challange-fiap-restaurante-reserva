@@ -1,16 +1,12 @@
 package br.com.fiap.restaurante.gateway.database.restauranteimpl;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import br.com.fiap.restaurante.exception.RestauranteNaoEncontradoException;
-import br.com.fiap.restaurante.gateway.database.entity.restaurante.RestauranteEntity;
 import br.com.fiap.restaurante.gateway.database.repository.restaurante.RestauranteRepository;
-import org.assertj.core.api.AssertionsForClassTypes;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -131,11 +127,6 @@ class RestauranteGatewayImplTestIT {
 		return new Restaurante(null, "Heroe's Burguer",
 				"Rua de Teste, 59", "Hamburguers e Lanches", "Das 9h às 18h - Seg a Sex.", 15);
 	}
-	
-	private RestauranteEntity gerarRestauranteEntity() {
-		return new RestauranteEntity(null, "Heroe's Burguer",
-				"Rua de Teste, 59", "Hamburguers e Lanches", "Das 9h às 18h - Seg a Sex.", 15);
-	}
 
 	private Restaurante registrarRestaurante() {
 		var restaurante = gerarRestaurante();
@@ -168,5 +159,4 @@ class RestauranteGatewayImplTestIT {
 		}
 
 	}
-
 }
