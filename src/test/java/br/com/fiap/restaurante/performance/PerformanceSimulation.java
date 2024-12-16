@@ -1,14 +1,14 @@
 package br.com.fiap.restaurante.performance;
 
-import java.time.Duration;
-
-import static io.gatling.javaapi.http.HttpDsl.http;
 import static io.gatling.javaapi.core.CoreDsl.StringBody;
 import static io.gatling.javaapi.core.CoreDsl.constantUsersPerSec;
-import static io.gatling.javaapi.core.CoreDsl.scenario;
 import static io.gatling.javaapi.core.CoreDsl.global;
 import static io.gatling.javaapi.core.CoreDsl.rampUsersPerSec;
+import static io.gatling.javaapi.core.CoreDsl.scenario;
+import static io.gatling.javaapi.http.HttpDsl.http;
 import static io.gatling.javaapi.http.HttpDsl.status;
+
+import java.time.Duration;
 
 import io.gatling.javaapi.core.ActionBuilder;
 import io.gatling.javaapi.core.ScenarioBuilder;
@@ -17,7 +17,7 @@ import io.gatling.javaapi.http.HttpProtocolBuilder;
 
 public class PerformanceSimulation extends Simulation {
 
-    private final HttpProtocolBuilder httpProtocol = http.baseUrl("http://localhost:9090").header("Content-Type",
+    private final HttpProtocolBuilder httpProtocol = http.baseUrl("http://localhost:8080").header("Content-Type",
             "application/json");
 
     ActionBuilder criarCliente = http("criar cliente")

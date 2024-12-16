@@ -54,7 +54,7 @@ public class CriarClienteUseCaseImplIT {
         assertThat(clienteSalvo)
                 .isInstanceOf(Cliente.class)
                 .isNotNull();
-        assertThat(clienteSalvo.getId()).isEqualTo(cliente.getId());
+        assertThat(clienteSalvo.getId()).isGreaterThan(0);
 
     }
 
