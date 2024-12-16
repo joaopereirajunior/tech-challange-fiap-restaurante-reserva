@@ -33,18 +33,14 @@ class AtualizarRestauranteUseCaseImplIT {
 	@Autowired
 	private RestauranteGateway restauranteGateway;
 
-	AutoCloseable openMocks;
-
 	@BeforeEach
 	void setup(){
-		openMocks = MockitoAnnotations.openMocks(this);
-		registrarRestaurante();
+	
 	}
-
 
 	@AfterEach
 	void teardown() throws Exception {
-		openMocks.close();
+
 	}
 	
 	@Test
@@ -91,15 +87,14 @@ class AtualizarRestauranteUseCaseImplIT {
 	}
 	
 	private Restaurante gerarRestaurante() {
-		return new Restaurante(5L, "Heroe's Burguer", 
+		return new Restaurante(null, "Heroe's Burguer", 
 				"Rua de Teste, 59", "Hamburguers e Lanches", "Das 9h às 18h - Seg a Sex.", 15);
 	}
 
 	private Restaurante registrarRestaurante() {
 		var restaurante = gerarRestaurante();
-		restauranteGateway.salvar(restaurante);
 
-		return restaurante;
+		return restauranteGateway.salvar(restaurante);
 	}
 
 }
