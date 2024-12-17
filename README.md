@@ -15,6 +15,7 @@ Este projeto faz parte do *Tech Challenge - Fase 3*, nele foi construido um Sist
 A aplicação se encontra disponível no seguinte endereço:
 
 DEPLOY AZURE (Container Instances): [[http://20.226.165.140:8080/swagger-ui/index.html](http://20.226.165.140:8080/swagger-ui/index.html)]
+
 URL LOCAL: [[http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)]
     
 ## Instruções para Execução dos Testes
