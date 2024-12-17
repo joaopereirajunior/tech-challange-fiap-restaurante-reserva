@@ -14,9 +14,10 @@ Este projeto faz parte do *Tech Challenge - Fase 3*, nele foi construido um Sist
 
 A aplicação se encontra disponível no seguinte endereço:
 
-DEPLOY AZURE (Container Instances): [[http://20.226.165.140:8080/swagger-ui/index.html](http://20.226.165.140:8080/swagger-ui/index.html)]
+DEPLOY AZURE (Container Instances): [[http://20.201.70.19:8080/swagger-ui/index.html](http://20.201.70.19:8080/swagger-ui/index.html)]
 
 DEPLOY NUVEM GRATUITA (Render): [[https://restaurante-app-ql1h.onrender.com/swagger-ui/index.html](https://restaurante-app-ql1h.onrender.com/swagger-ui/index.html)]
+Obs. Por se tratar de uma plataforma gratuita, pode haver lentidão no acesso.
 
 URL LOCAL: [[http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)]
 
