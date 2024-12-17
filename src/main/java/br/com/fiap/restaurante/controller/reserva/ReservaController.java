@@ -7,6 +7,7 @@ import br.com.fiap.restaurante.usecase.reserva.AtualizarReservaUseCase;
 import br.com.fiap.restaurante.usecase.reserva.ObterReservaPorIdUseCase;
 import br.com.fiap.restaurante.usecase.reserva.CriarReservaUseCase;
 import br.com.fiap.restaurante.usecase.reserva.DeletarReservaUseCase;
+import br.com.fiap.restaurante.usecase.reserva.FinalizarReservaUseCase;
 import br.com.fiap.restaurante.usecase.reserva.ListarReservasUseCase;
 import lombok.RequiredArgsConstructor;
 
@@ -25,6 +26,7 @@ public class ReservaController {
     private final ListarReservasUseCase listarReservasUseCase;
     private final AtualizarReservaUseCase atualizarReservaUseCase;
     private final DeletarReservaUseCase excluirReservaUseCase;
+    private final FinalizarReservaUseCase finalizarReservaUseCase;
 
     @PostMapping
     public ResponseEntity<Reserva> efetuarReserva(@RequestBody Reserva reserva) {
@@ -50,5 +52,10 @@ public class ReservaController {
     public ResponseEntity<Void> deletarReserva(@PathVariable Long id) {
         excluirReservaUseCase.execute(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<Reserva> finalizarReserva(@PathVariable Long id, @RequestBody Reserva reserva) {
+        return ResponseEntity.ok(finalizarReservaUseCase.execute(id, reserva));
     }
 }
