@@ -16,8 +16,24 @@ A aplicação se encontra disponível no seguinte endereço:
 
 DEPLOY AZURE (Container Instances): [[http://20.226.165.140:8080/swagger-ui/index.html](http://20.226.165.140:8080/swagger-ui/index.html)]
 
+DEPLOY NUVEM GRATUITA (Render): [[https://restaurante-app-ql1h.onrender.com/swagger-ui/index.html](https://restaurante-app-ql1h.onrender.com/swagger-ui/index.html)]
+
 URL LOCAL: [[http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)]
-    
+
+## Para executar a aplicação via Docker, siga os comandos abaixo:
+
+1. **Faça login no Docker:**
+   ```bash
+   docker login
+    ```
+2. **Baixe a imagem mais recente no Docker Hub:**
+     ```bash
+    docker pull romulosousa865/restaurante-app:latest
+    ```
+3. **Crie e inicie um container a partir da imagem com o seguinte comando**
+     ```bash
+    docker run -p 8080:8080 -d romulosousa865/restaurante-app:latest
+    ```    
 ## Instruções para Execução dos Testes
 
 - Comando para execução dos **Testes Unitários**:
