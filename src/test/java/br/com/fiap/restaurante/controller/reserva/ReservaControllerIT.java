@@ -196,4 +196,26 @@ class ReservaControllerIT {
           .body(matchesJsonSchemaInClasspath("./schemas/ReservasSchema.json"));
     }
   }
+
+  @Nested
+  class FinalizarReserva {
+
+    @Test
+    void devePermirirFinalizarReserva() {      
+      var reserva = registrarReserva();
+
+      reserva.setFinalizada(true);
+      reserva.setNotaAvaliacao(5);
+
+      given()
+      .filter(new AllureRestAssured())
+          .contentType(MediaType.APPLICATION_JSON_VALUE)
+          .body(reserva)
+          .when()
+          .patch("/reservas/{id}", reserva.id)
+          .then()
+          .statusCode(HttpStatus.OK.value())
+          .body(matchesJsonSchemaInClasspath("./schemas/ReservaSchema.json"));
+    }
+  }
 }

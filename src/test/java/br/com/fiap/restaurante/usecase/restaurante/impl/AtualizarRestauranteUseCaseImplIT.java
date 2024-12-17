@@ -56,7 +56,8 @@ class AtualizarRestauranteUseCaseImplIT {
 
 		var restauranteOptional = restauranteGatewayImpl.buscarPorId(restaurante.getId());
 
-		restaurante = restauranteOptional.get();
+		if(restauranteOptional.isPresent())
+			restaurante = restauranteOptional.get();
 		
 		// Act
 		Restaurante restauranteObtido = atualizarRestauranteUseCaseImpl.execute(restaurante.getId(),

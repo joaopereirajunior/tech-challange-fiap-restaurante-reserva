@@ -6,6 +6,7 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -38,6 +39,7 @@ import br.com.fiap.restaurante.usecase.reserva.CriarReservaUseCase;
 import br.com.fiap.restaurante.usecase.reserva.ListarReservasUseCase;
 import br.com.fiap.restaurante.usecase.reserva.ObterReservaPorIdUseCase;
 import br.com.fiap.restaurante.usecase.reserva.DeletarReservaUseCase;
+import br.com.fiap.restaurante.usecase.reserva.FinalizarReservaUseCase;
 
 class ReservaControllerTest {
 
@@ -56,6 +58,9 @@ class ReservaControllerTest {
 
     @Mock
     private AtualizarReservaUseCase atualizarReservaUseCase;
+
+    @Mock
+    private FinalizarReservaUseCase finalizarReservaUseCase;
 
     @Mock
     private DeletarReservaUseCase deletarReservaUseCase;
@@ -149,6 +154,23 @@ class ReservaControllerTest {
         mockMvc.perform(delete("/reservas/1")).andExpect(status().isNoContent());
     }
     
+    @Test
+    void deveFinalizarReservaComSucesso() throws Exception {
+        Long id = 5L;
+        Reserva reservaFinalizada = gerarReserva(id);
+        reservaFinalizada.setFinalizada(true);
+        
+        when(finalizarReservaUseCase.execute(anyLong(), any(Reserva.class))).thenReturn(reservaFinalizada);
+
+        var content = asJsonString(reservaFinalizada);
+
+        mockMvc.perform(patch("/reservas/{id}", id)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.finalizada").value(true));
+    }
+
 	public static String asJsonString(final Reserva object) {
 		try {
             ObjectMapper mapper = new ObjectMapper();
